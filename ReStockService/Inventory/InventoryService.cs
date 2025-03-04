@@ -1,30 +1,33 @@
-﻿using Dapper.FastCrud;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.EntityFrameworkCore;
 using ReStockDomain;
-using System.Data;
 
 namespace ReStockService.Inventory
 {
     public class InventoryService : IInventoryService
     {
-        private string _connectionString;
-        public InventoryService(string connectionString)
+        private readonly ReStockDbContext _db;
+
+        public InventoryService(ReStockDbContext db)
         {
-            _connectionString = connectionString;
+            _db = db;
         }
 
-        private IDbConnection GetConnection() => new SqlConnection(_connectionString);
+        public async Task<DistributionCenterInventory> GetDistributionCenterInventoryAsync(string ItemNo)
+            => await _db.DistributionCenterInventories.FirstOrDefaultAsync(x => x.ItemNo == ItemNo);
 
-        public async Task<DistributionCenterInventory> GetDistributionCenterInventoryAsync(string productNo)
-            => await GetConnection().GetAsync<DistributionCenterInventory>(new DistributionCenterInventory() { ProductNo = productNo });
-
-        public async Task<StoreInventory> GetStoreInventoryAsync(int storeNo, string productNo)
-            => await GetConnection().GetAsync<StoreInventory>(new StoreInventory() { StoreNo = storeNo, ProductNo = productNo });
+        public async Task<StoreInventory> GetStoreInventoryAsync(int storeNo, string ItemNo)
+            => await _db.StoreInventories.FirstOrDefaultAsync(x => x.StoreNo == storeNo && x.ItemNo == ItemNo);
 
         public async Task UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
-            => await GetConnection().UpdateAsync(inventory);
+        {
+            _db.DistributionCenterInventories.Update(inventory);
+            await _db.SaveChangesAsync();
+        }
 
         public Task UpdateStoreInventoryAsync(StoreInventory inventory)
-            => GetConnection().UpdateAsync(inventory);
+        {
+            _db.StoreInventories.Update(inventory);
+            return _db.SaveChangesAsync();
+        }
     }
 }

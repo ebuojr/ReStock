@@ -1,24 +1,30 @@
-﻿using Dapper.FastCrud;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.EntityFrameworkCore;
 using ReStockDomain;
-using System.Data;
 
 namespace ReStockService.Threshold
 {
     public class ThresholdService : IThresholdService
     {
-        private string _connectionString;
-        public ThresholdService(string connectionString)
+        private readonly ReStockDbContext _db;
+
+        public ThresholdService(ReStockDbContext db)
         {
-            _connectionString = connectionString;
+            _db = db;
         }
 
-        private IDbConnection GetConnection() => new SqlConnection(_connectionString);
+        public async Task CreateThreshold(InventoryThreshold threshold)
+        {
+            await _db.InventoryThresholds.AddAsync(threshold);
+            await _db.SaveChangesAsync();
+        }
 
-        public async Task<InventoryThreshold> GetThresholdAsync(int storeNo, string productNo)
-            => await GetConnection().GetAsync<InventoryThreshold>(new InventoryThreshold() { StoreNo = storeNo, ProductNo = productNo });
+        public async Task<InventoryThreshold> GetThresholdAsync(int storeNo, string ItemNo)
+            => await _db.InventoryThresholds.FirstOrDefaultAsync(threshold => threshold.StoreNo == storeNo && threshold.ItemNo == ItemNo);
 
         public async Task UpdateThresholdAsync(InventoryThreshold threshold)
-            => await GetConnection().UpdateAsync(threshold);
+        {
+            _db.InventoryThresholds.Update(threshold);
+            await _db.SaveChangesAsync();
+        }
     }
 }

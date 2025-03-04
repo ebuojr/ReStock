@@ -1,33 +1,43 @@
-﻿
-using Dapper.FastCrud;
-using Microsoft.Data.SqlClient;
-using System.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ReStockDomain;
 
 namespace ReStockService.Product
 {
     public class ProductService : IProductService
     {
-        private string _connectionString;
-        public ProductService(string connectionString)
+        private readonly ReStockDbContext _db;
+
+        public ProductService(ReStockDbContext db)
         {
-            _connectionString = connectionString;
+            _db = db;
         }
 
-        private IDbConnection GetConnection() => new SqlConnection(_connectionString);
-
         public async Task CreateProductAsync(ReStockDomain.Product product)
-            => await GetConnection().InsertAsync<ReStockDomain.Product>(product);
+        {
+            await _db.Products.AddAsync(product);
+            await _db.SaveChangesAsync();
+        }
 
-        public Task DeleteProductAsync(int id)
-            => GetConnection().DeleteAsync(new ReStockDomain.Product { Id = id });
+        public async Task DeleteProductAsync(int id)
+        {
+            var temp = await _db.Products.FindAsync(id);
+            if (temp is null)
+                throw new Exception("Product not found");
 
-        public async Task<ReStockDomain.Product> GetProductByNoAsync(string productNo)
-            => await GetConnection().GetAsync(new ReStockDomain.Product { No = productNo });
+            _db.Products.Remove(temp);
+            await _db.SaveChangesAsync();
+        }
 
-        public Task<IEnumerable<ReStockDomain.Product>> GetProductsAsync()
-            => GetConnection().FindAsync<ReStockDomain.Product>();
+        public async Task<ReStockDomain.Product> GetProductByNoAsync(string ItemNo)
+            => await _db.Products.FirstOrDefaultAsync(p => p.ItemNo == ItemNo);
 
-        public Task UpdateProductAsync(ReStockDomain.Product product)
-            => GetConnection().UpdateAsync<ReStockDomain.Product>(product);
+        public async Task<IEnumerable<ReStockDomain.Product>> GetProductsAsync()
+            => await _db.Products.ToListAsync();
+
+        public async Task UpdateProductAsync(ReStockDomain.Product product)
+        {
+            _db.Products.Update(product);
+            await _db.SaveChangesAsync();
+        }
     }
 }

@@ -1,30 +1,33 @@
-﻿
-using Dapper.FastCrud;
-using Microsoft.Data.SqlClient;
-using System.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ReStockDomain;
 
 namespace ReStockService.Store
 {
     public class StoreService : IStoreService
     {
-        private readonly string _connectionString;
-        private IDbConnection GetConnection() => new SqlConnection(_connectionString);
+        private readonly ReStockDbContext _db;
 
-        public StoreService(string connectionString)
+        public StoreService(ReStockDbContext db)
         {
-            _connectionString = connectionString;
+            _db = db;
         }
 
         public async Task CreateNewStore(ReStockDomain.Store store)
-            => await GetConnection().InsertAsync<ReStockDomain.Store>(store);
+        {
+            await _db.Stores.AddAsync(store);
+            await _db.SaveChangesAsync();
+        }
 
         public async Task<List<ReStockDomain.Store>> GetAllStores()
-            => (await GetConnection().FindAsync<ReStockDomain.Store>()).ToList();
+            => await _db.Stores.ToListAsync();
 
-        public Task<ReStockDomain.Store> GetStore(int storeNo)
-            => GetConnection().GetAsync<ReStockDomain.Store>(new ReStockDomain.Store() { No = storeNo });
+        public async Task<ReStockDomain.Store> GetStore(int storeNo)
+            => await _db.Stores.FirstOrDefaultAsync(s => s.No == storeNo);
 
-        public Task UpdateStore(ReStockDomain.Store store)
-            => GetConnection().UpdateAsync<ReStockDomain.Store>(store);
+        public async Task UpdateStore(ReStockDomain.Store store)
+        {
+            _db.Stores.Update(store);
+            await _db.SaveChangesAsync();
+        }
     }
 }

@@ -1,38 +1,39 @@
-﻿using Dapper.FastCrud;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.EntityFrameworkCore;
 using ReStockDomain;
-using System.Data;
 
 namespace ReStockService.SalesOrder
 {
     public class SalesOrderService : ISalesOrderService
     {
-        private readonly string _connectionString;
-        private IDbConnection GetConnection() => new SqlConnection(_connectionString);
-        public SalesOrderService(string connectionString)
+        private readonly ReStockDbContext _db;
+
+        public SalesOrderService(ReStockDbContext db)
         {
-            _connectionString = connectionString;
+            _db = db;
         }
+
         public async Task<(ReStockDomain.SalesOrder, IEnumerable<SalesOrderLine>)> CreateSalesOrderAsync(ReStockDomain.SalesOrder salesOrder, List<SalesOrderLine> salesOrderLines)
         {
-            await GetConnection().InsertAsync(salesOrder);
-            await GetConnection().InsertAsync(salesOrderLines);
+            await _db.SalesOrders.AddAsync(salesOrder);
+            await _db.SalesOrderLines.AddRangeAsync(salesOrderLines);
+            await _db.SaveChangesAsync();
+
             return (salesOrder, salesOrderLines);
         }
 
         public async Task<(ReStockDomain.SalesOrder, IEnumerable<SalesOrderLine>)> GetSalesOrderAsync(string headerNo)
         {
-            var header = await GetConnection().GetAsync<ReStockDomain.SalesOrder>(new ReStockDomain.SalesOrder() { HeaderNo = headerNo });
-            var lines = await GetConnection().FindAsync<SalesOrderLine>(statement => statement
-                .Where($"{nameof(SalesOrderLine.HeaderNo):C} = @HeaderNo")
-                .WithParameters(new { HeaderNo = headerNo }));
+            var header = await _db.SalesOrders.FirstOrDefaultAsync(so => so.HeaderNo == headerNo);
+            var lines = await _db.SalesOrderLines.Where(sol => sol.HeaderNo == headerNo).ToListAsync();
 
             return (header, lines);
         }
 
         public async Task<ReStockDomain.SalesOrder> UpdateSalesOrderAsync(ReStockDomain.SalesOrder salesOrder)
         {
-            await GetConnection().UpdateAsync(salesOrder);
+            _db.SalesOrders.Update(salesOrder);
+            await _db.SaveChangesAsync();
+
             return salesOrder;
         }
     }

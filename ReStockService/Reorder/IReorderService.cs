@@ -2,6 +2,6 @@
 {
     public interface IReorderService
     {
-        Task<bool> ProcessReorderAsync(int storeNo, string productNo, int quantity);
+        Task<bool> ProcessReorderAsync(int storeNo, string ItemNo, int quantity);
     }
 }

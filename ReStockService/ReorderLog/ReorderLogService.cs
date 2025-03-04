@@ -1,42 +1,37 @@
-﻿using Dapper.FastCrud;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.EntityFrameworkCore;
 using ReStockDomain;
-using System.Data;
 
 namespace ReStockService.ReorderLog
 {
-    class ReorderLogService : IReorderLogService
+    public class ReorderLogService : IReorderLogService
     {
-        private string _connectionString;
-        public ReorderLogService(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
-        private IDbConnection GetConnection() => new SqlConnection(_connectionString);
+        private readonly ReStockDbContext _db;
 
-        public async Task LogAsync(int storeNo, string productNo, int quantity, string eventType, string description, bool ordered)
-            => await GetConnection().InsertAsync<ReOrderLog>(new ReOrderLog()
-            {
-                StoreNo = storeNo,
-                ProductNo = productNo,
-                Quantity = quantity,
-                EventType = eventType,
-                Description = description,
-                Ordered = ordered
-            });
-
-        public async Task<IEnumerable<ReOrderLog>> GetLogsByProductNoProductNoAsync(int storeNo, string productNo)
+        public ReorderLogService(ReStockDbContext db)
         {
-            using var connection = GetConnection();
-            var logs = await connection.FindAsync<ReOrderLog>(statement => statement
-                .Where($"{nameof(ReOrderLog.StoreNo):C} = @StoreNo AND {nameof(ReOrderLog.ProductNo):C} = @ProductNo")
-                .WithParameters(new { StoreNo = storeNo, ProductNo = productNo }));
-            return logs;
+            _db = db;
         }
+
+        public async Task<IEnumerable<ReOrderLog>> GetLogsByItemNoItemNoAsync(int storeNo, string ItemNo)
+            => await _db.ReOrderLogs.Where(l => l.StoreNo == storeNo && l.ItemNo == ItemNo).ToListAsync();
 
         public async Task<IEnumerable<ReOrderLog>> GetLogsByStoreNoAsync(int storeNo)
-            => await GetConnection().FindAsync<ReOrderLog>(statement => statement
-                .Where($"{nameof(ReOrderLog.StoreNo):C} = @StoreNo")
-                .WithParameters(new { StoreNo = storeNo }));
+            => await _db.ReOrderLogs.Where(x => x.StoreNo == storeNo).ToListAsync();
+
+        public async Task LogAsync(int storeNo, string ItemNo, int quantity, string eventType, string description, bool ordered)
+        {
+            var log = new ReOrderLog
+            {
+                StoreNo = storeNo,
+                ItemNo = ItemNo,
+                Quantity = quantity,
+                LogTime = DateTime.Now,
+                EventType = eventType,
+                Description = description,
+                Error = !ordered
+            };
+            _db.ReOrderLogs.Add(log);
+            await _db.SaveChangesAsync();
+        }
     }
 }

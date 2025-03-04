@@ -1,17 +1,15 @@
-﻿namespace ReStockDomain
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ReStockDomain
 {
     public class Product
     {
+        [Key]
         public int Id { get; set; }
-        public string No { get; set; }
-        public string Style { get; set; }
-        public string Color { get; set; }
-        public string Size { get; set; }
+        public string ItemNo { get; set; }
         public string Name { get; set; }
-        public string Description { get; set; }
         public string Brand { get; set; }
-        public string Category { get; set; }
-        public decimal CostPrice { get; set; }
         public decimal RetailPrice { get; set; }
+        public bool IsActive { get; set; }
     }
 }

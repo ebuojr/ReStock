@@ -15,9 +15,16 @@ namespace ReStockApi.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult> GetAllProducts()
+        public async Task<IActionResult> GetAllProducts()
         {
             return Ok(_productService.GetProductsAsync());
+        }
+
+        [HttpPost("create")]
+        public async Task<ActionResult> CreateProduct([FromBody] Models.Product product)
+        {
+            await _productService.CreateProductAsync(product);
+            return Ok();
         }
     }
 }

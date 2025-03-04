@@ -6,7 +6,7 @@ namespace ReStockApi.Models
     {
         public ReStockDbContext(DbContextOptions<ReStockDbContext> options) : base(options) { }
 
-        public DbSet<Product> Products { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
         public DbSet<Store> Stores { get; set; }
         public DbSet<StoreInventory> StoreInventories { get; set; }
         public DbSet<DistributionCenterInventory> DistributionCenterInventories { get; set; }

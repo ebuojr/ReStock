@@ -17,7 +17,8 @@ namespace ReStockApi.Controllers
         [HttpGet("all")]
         public async Task<IActionResult> GetAllProducts()
         {
-            return Ok(_productService.GetProductsAsync());
+            var items = await _productService.GetProductsAsync();
+            return Ok(items);
         }
 
         [HttpPost("create")]
@@ -25,6 +26,27 @@ namespace ReStockApi.Controllers
         {
             await _productService.CreateProductAsync(product);
             return Ok();
+        }
+
+        [HttpPut("update")]
+        public async Task<ActionResult> UpdateProduct([FromBody] Models.Product product)
+        {
+            await _productService.UpdateProductAsync(product);
+            return Ok();
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult> DeleteProduct(int id)
+        {
+            await _productService.DeleteProductAsync(id);
+            return Ok();
+        }
+
+        [HttpGet("get/{ItemNo}")]
+        public async Task<ActionResult> GetProductByNo(string ItemNo)
+        {
+            var item = await _productService.GetProductByNoAsync(ItemNo);
+            return Ok(item ?? null);
         }
     }
 }

@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35806.99
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReStockDomain", "ReStockDomain\ReStockDomain.csproj", "{D730E367-284F-48E2-91F8-FF2CE34678CF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReStockService", "ReStockService\ReStockService.csproj", "{0E6FF810-34A8-406C-A584-9244C0B1A58B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReStockApi", "ReStockApi\ReStockApi.csproj", "{CBABB295-5DD8-4BF8-BCEC-5E1FCACD7B6F}"
 EndProject
 Global
@@ -15,14 +11,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D730E367-284F-48E2-91F8-FF2CE34678CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D730E367-284F-48E2-91F8-FF2CE34678CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D730E367-284F-48E2-91F8-FF2CE34678CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D730E367-284F-48E2-91F8-FF2CE34678CF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0E6FF810-34A8-406C-A584-9244C0B1A58B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0E6FF810-34A8-406C-A584-9244C0B1A58B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0E6FF810-34A8-406C-A584-9244C0B1A58B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0E6FF810-34A8-406C-A584-9244C0B1A58B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CBABB295-5DD8-4BF8-BCEC-5E1FCACD7B6F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CBABB295-5DD8-4BF8-BCEC-5E1FCACD7B6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBABB295-5DD8-4BF8-BCEC-5E1FCACD7B6F}.Release|Any CPU.ActiveCfg = Release|Any CPU

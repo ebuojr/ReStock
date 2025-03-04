@@ -26,7 +26,7 @@ builder.Services.AddScoped<IReorderLogService, ReorderLogService>();
 // database
 builder.Services.AddDbContext<ReStockDbContext>(options =>
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("ReStockDbContext"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 var app = builder.Build();

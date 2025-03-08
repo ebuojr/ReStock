@@ -14,8 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 // fluentValidation
 builder.Services.AddFluentValidationAutoValidation();
@@ -40,13 +39,10 @@ var app = builder.Build();
 // configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger(options =>
-    {
-        options.RouteTemplate = "/openapi/{documentName}.json";
-    });
     app.MapScalarApiReference();
 }
 
+app.MapOpenApi();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();

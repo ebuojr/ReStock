@@ -6,5 +6,6 @@
         Task<List<Models.Store>> GetAllStores();
         Task<Models.Store> GetStore(int storeNo);
         Task UpdateStore(Models.Store store);
+        Task DeleteStore(int id);
     }
 }

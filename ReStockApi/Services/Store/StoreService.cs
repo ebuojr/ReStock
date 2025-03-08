@@ -18,6 +18,13 @@ namespace ReStockApi.Services.Store
             await _db.SaveChangesAsync();
         }
 
+        public async Task DeleteStore(int id)
+        {
+            var item = await _db.Stores.FirstOrDefaultAsync(s => s.Id == id);
+            _db.Stores.Remove(item);
+            await _db.SaveChangesAsync();
+        }
+
         public async Task<List<Models.Store>> GetAllStores()
             => await _db.Stores.ToListAsync();
 

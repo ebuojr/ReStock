@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using ReStockApi.Models;
+using System.Security.Cryptography;
 
 namespace ReStockApi.Validation
 {

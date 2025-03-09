@@ -18,6 +18,9 @@ namespace ReStockApi.Services.Inventory
         public async Task<StoreInventory> GetStoreInventoryAsync(int storeNo, string ItemNo)
             => await _db.StoreInventories.FirstOrDefaultAsync(x => x.StoreNo == storeNo && x.ItemNo == ItemNo);
 
+        public Task<List<StoreInventory>> GetStoreInventoryByStoreNoAsync(int storeNo)
+            => _db.StoreInventories.Where(x => x.StoreNo == storeNo).ToListAsync();
+
         public async Task UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {
             _db.DistributionCenterInventories.Update(inventory);

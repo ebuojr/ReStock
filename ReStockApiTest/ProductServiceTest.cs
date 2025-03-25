@@ -1,3 +1,4 @@
+using FluentAssertions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using ReStockApi.Models;
@@ -49,11 +50,11 @@ namespace ReStockApiTest
 
             // Assert
             var savedProduct = await _context.Products.FindAsync(product.Id);
-            Assert.NotNull(savedProduct);
-            Assert.Equal(product.ItemNo, savedProduct.ItemNo);
-            Assert.Equal(product.Name, savedProduct.Name);
-            Assert.Equal(product.Brand, savedProduct.Brand);
-            Assert.Equal(product.RetailPrice, savedProduct.RetailPrice);
+            savedProduct.Should().NotBeNull();
+            savedProduct.ItemNo.Should().Be(product.ItemNo);
+            savedProduct.Name.Should().Be(product.Name);
+            savedProduct.Brand.Should().Be(product.Brand);
+            savedProduct.RetailPrice.Should().Be(product.RetailPrice);
         }
 
         [Theory]
@@ -74,10 +75,9 @@ namespace ReStockApiTest
             };
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ValidationException>(
-                () => _productService.CreateProductAsync(product));
-
-            Assert.Contains("RetailPrice must be greater than 0", exception.Message);
+            var action = () => _productService.CreateProductAsync(product);
+            await action.Should().ThrowAsync<ValidationException>()
+                .WithMessage("*RetailPrice must be greater than 0*");
         }
 
         [Fact]
@@ -87,13 +87,13 @@ namespace ReStockApiTest
             var product = new Product();
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ValidationException>(
-                () => _productService.CreateProductAsync(product));
+            var action = () => _productService.CreateProductAsync(product);
+            var exception = await action.Should().ThrowAsync<ValidationException>();
 
-            Assert.Contains("Name is required", exception.Message);
-            Assert.Contains("ItemNo is required", exception.Message);
-            Assert.Contains("Brand is required", exception.Message);
-            Assert.Contains("RetailPrice must be greater than 0", exception.Message);
+            exception.WithMessage("*Name is required*")
+                .WithMessage("*ItemNo is required*")
+                .WithMessage("*Brand is required*")
+                .WithMessage("*RetailPrice must be greater than 0*");
         }
 
         [Fact]
@@ -117,17 +117,16 @@ namespace ReStockApiTest
 
             // Assert
             var deletedProduct = await _context.Products.FindAsync(product.Id);
-            Assert.Null(deletedProduct);
+            deletedProduct.Should().BeNull();
         }
 
         [Fact]
         public async Task DeleteProductAsync_NonExistingProduct_ThrowsException()
         {
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<Exception>(
-                () => _productService.DeleteProductAsync(1));
-
-            Assert.Equal("Product not found", exception.Message);
+            var action = () => _productService.DeleteProductAsync(1);
+            await action.Should().ThrowAsync<Exception>()
+                .WithMessage("Product not found");
         }
 
         [Fact]
@@ -150,11 +149,11 @@ namespace ReStockApiTest
             var result = await _productService.GetProductByNoAsync("ITEM001");
 
             // Assert
-            Assert.NotNull(result);
-            Assert.Equal("ITEM001", result.ItemNo);
-            Assert.Equal("Test Product", result.Name);
-            Assert.Equal("Zizzi", result.Brand);
-            Assert.Equal(99.99m, result.RetailPrice);
+            result.Should().NotBeNull();
+            result.ItemNo.Should().Be("ITEM001");
+            result.Name.Should().Be("Test Product");
+            result.Brand.Should().Be("Zizzi");
+            result.RetailPrice.Should().Be(99.99m);
         }
 
         [Fact]
@@ -164,7 +163,7 @@ namespace ReStockApiTest
             var result = await _productService.GetProductByNoAsync("NONEXISTENT");
 
             // Assert
-            Assert.Null(result);
+            result.Should().BeNull();
         }
 
         [Fact]
@@ -199,9 +198,9 @@ namespace ReStockApiTest
             var result = await _productService.GetProductsAsync();
 
             // Assert
-            Assert.Equal(2, result.Count);
-            Assert.Contains(result, p => p.ItemNo == "ITEM001" && p.RetailPrice == 99.99m);
-            Assert.Contains(result, p => p.ItemNo == "ITEM002" && p.RetailPrice == 149.99m);
+            result.Should().HaveCount(2);
+            result.Should().Contain(p => p.ItemNo == "ITEM001" && p.RetailPrice == 99.99m);
+            result.Should().Contain(p => p.ItemNo == "ITEM002" && p.RetailPrice == 149.99m);
         }
 
         [Fact]
@@ -238,11 +237,11 @@ namespace ReStockApiTest
 
             // Assert
             var result = await _context.Products.FindAsync(product.Id);
-            Assert.NotNull(result);
-            Assert.Equal("Updated Name", result.Name);
-            Assert.Equal(150m, result.RetailPrice);
-            Assert.Equal("ITEM001", result.ItemNo);
-            Assert.Equal("Zizzi", result.Brand);
+            result.Should().NotBeNull();
+            result.Name.Should().Be("Updated Name");
+            result.RetailPrice.Should().Be(150m);
+            result.ItemNo.Should().Be("ITEM001");
+            result.Brand.Should().Be("Zizzi");
         }
 
         [Fact]
@@ -260,13 +259,13 @@ namespace ReStockApiTest
             };
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ValidationException>(
-                () => _productService.UpdateProductAsync(product));
+            var action = () => _productService.UpdateProductAsync(product);
+            var exception = await action.Should().ThrowAsync<ValidationException>();
 
-            Assert.Contains("Name is required", exception.Message);
-            Assert.Contains("ItemNo is required", exception.Message);
-            Assert.Contains("Brand is required", exception.Message);
-            Assert.Contains("RetailPrice must be greater than 0", exception.Message);
+            exception.WithMessage("*Name is required*")
+                .WithMessage("*ItemNo is required*")
+                .WithMessage("*Brand is required*")
+                .WithMessage("*RetailPrice must be greater than 0*");
         }
     }
 }

@@ -13,6 +13,7 @@ namespace ReStockApi.Models
         public DbSet<InventoryThreshold> InventoryThresholds { get; set; }
         public DbSet<SalesOrder> SalesOrders { get; set; }
         public DbSet<SalesOrderLine> SalesOrderLines { get; set; }
+        public DbSet<Reorder> Reorders { get; set; }
         public DbSet<ReOrderLog> ReOrderLogs  { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,6 +25,7 @@ namespace ReStockApi.Models
             modelBuilder.Entity<InventoryThreshold>().HasKey(it => it.Id);
             modelBuilder.Entity<SalesOrder>().HasKey(so => so.Id);
             modelBuilder.Entity<SalesOrderLine>().HasKey(sol => sol.Id);
+            modelBuilder.Entity<Reorder>().HasKey(r => r.Id);
             modelBuilder.Entity<ReOrderLog>().HasKey(rol => rol.Id);
         }
     }

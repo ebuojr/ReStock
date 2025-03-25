@@ -21,7 +21,7 @@ namespace ReStockApi.Services.SalesOrder
             return (salesOrder, salesOrderLines);
         }
 
-        public async Task<(Models.SalesOrder, IEnumerable<SalesOrderLine>)> GetSalesOrderAsync(string headerNo)
+        public async Task<(Models.SalesOrder, IEnumerable<SalesOrderLine>)> GetSalesOrderByHeaderNoAsync(string headerNo)
         {
             var header = await _db.SalesOrders.FirstOrDefaultAsync(so => so.HeaderNo == headerNo);
             var lines = await _db.SalesOrderLines.Where(sol => sol.HeaderNo == headerNo).ToListAsync();
@@ -29,7 +29,14 @@ namespace ReStockApi.Services.SalesOrder
             return (header, lines);
         }
 
-        public async Task<Models.SalesOrder> UpdateSalesOrderAsync(Models.SalesOrder salesOrder)
+        public async Task<(Models.SalesOrder, IEnumerable<SalesOrderLine>)> GetSalesOrderByStoreNoAsync(int storeNo)
+        {
+            var header = await _db.SalesOrders.FirstOrDefaultAsync(so => so.StoreNo == storeNo);
+            var lines = await _db.SalesOrderLines.Where(sol => sol.HeaderNo == header.HeaderNo).ToListAsync();
+            return (header, lines);
+        }
+
+        public async Task<Models.SalesOrder> UpdateSalesOrderHeaderAsync(Models.SalesOrder salesOrder)
         {
             _db.SalesOrders.Update(salesOrder);
             await _db.SaveChangesAsync();

@@ -2,7 +2,58 @@
 
 <PageTitle>Products</PageTitle>
 
+
+
 @code {
 
+    [Inject]
+    public IProductService _ProductService { get; set; } = default!;
+    public IEnumerable<Product> Products { get; set; } = new List<Product>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+    }
+
+    async Task CreateNewProduct(Product product)
+    {
+        try
+        {
+            var newProduct = await _ProductService.CreateProductAsync(product);
+            if (newProduct != null)
+                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    async Task UpdateProduct(Product product)
+    {
+        try
+        {
+            var updatedProduct = await _ProductService.UpdateProductAsync(product);
+            if (updatedProduct != null)
+                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    async Task DeleteProduct(Product product)
+    {
+        try
+        {
+            var deletedProduct = await _ProductService.DeleteProductAsync(product.Id);
+            if (deletedProduct != null)
+                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }

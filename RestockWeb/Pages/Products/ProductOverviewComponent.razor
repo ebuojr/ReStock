@@ -3,16 +3,63 @@
 <PageTitle>Products</PageTitle>
 
 
+<div class="w-full p-6">
+    <!-- Product grid -->
+    <div class="w-full p-2">
+        <h1 class="text-2xl font-bold mb-4">Product Overview</h1>
+
+        <!-- Responsive product grid -->
+        <div class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            @foreach (var product in Products)
+            {
+                <div class="bg-white rounded border border-gray-300 flex flex-col overflow-hidden relative">
+                    <!-- Product Image -->
+                    <div class="h-48 bg-gray-100">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23666' font-family='Arial' font-size='20'%3EPlaceholder%3C/text%3E%3C/svg%3E" alt="Product Image" class="w-full h-full object-cover" />
+                    </div>
+                    <!-- Product Details -->
+                    <div class="p-4 flex flex-col gap-2">
+                        <h2 class="text-lg font-semibold text-gray-900 truncate">@product.Name</h2>
+                        <p class="text-sm text-gray-600">Brand: <span class="font-medium">@product.Brand</span></p>
+                        <p class="text-sm text-gray-600">Price: <span class="font-medium">@product.RetailPrice DKK</span></p>
+                    </div>
+
+                    <!-- action menu -->
+                    <div class="absolute p-4 z-[10] end-0 bottom-0" x-data="{ open: false }">
+                        <button @click="open = !open" class="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v.01M12 12v.01M12 18v.01" />
+                            </svg>
+                        </button>
+                        <div x-transition x-show="open" x-on:click.away="open = false" class="absolute right-2 bottom-16 w-48 bg-white shadow border border-gray-300 rounded z-20">
+                            <ul>
+                                <li>
+                                    <button x-on:click="open = false" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded-t hover:underline">Update product</button>
+                                </li>
+                                <li>
+                                    <button x-on:click="open = false" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded-b hover:underline">Delete product</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
 
 @code {
 
     [Inject]
     public IProductService _ProductService { get; set; } = default!;
-    public IEnumerable<Product> Products { get; set; } = new List<Product>();
+    public List<Product> Products { get; set; } = new List<Product>();
+
+    private string newProductName = string.Empty;
+    private decimal newProductPrice = 0;
 
     protected override async Task OnInitializedAsync()
     {
-        Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+        Products = await _ProductService.GetProductsAsync();
     }
 
     async Task CreateNewProduct(Product product)

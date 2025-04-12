@@ -16,6 +16,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+// allow all CORS requests
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 // fluentValidation
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
@@ -41,7 +53,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapScalarApiReference();
 }
-
+app.UseCors("AllowAllOrigins");
 app.MapOpenApi();
 app.UseHttpsRedirection();
 app.UseAuthorization();

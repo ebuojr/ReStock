@@ -7,6 +7,7 @@ using RestockWeb.Services.Inventory;
 using RestockWeb.Services.Reorder;
 using RestockWeb.Services.SalesOrder;
 using RestockWeb.Services.Threshold;
+using Blazored.Toast;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -14,6 +15,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 // Set the base address for the API
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5126") });
+
+builder.Services.AddBlazoredToast();
+
 
 // Register services
 builder.Services.AddScoped<IProductService, ProductService>();

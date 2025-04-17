@@ -21,6 +21,10 @@ namespace ReStockApi.Services.Store
         public async Task DeleteStore(int id)
         {
             var item = await _db.Stores.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (item == null)
+                throw new Exception($"Store with id {id} not found");
+
             _db.Stores.Remove(item);
             await _db.SaveChangesAsync();
         }

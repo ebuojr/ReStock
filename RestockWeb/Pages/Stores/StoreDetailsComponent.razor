@@ -1,0 +1,45 @@
+@page "/stores/{StoreNo:int}"
+
+<PageTitle>Store Details</PageTitle>
+
+<div class="w-full p-6">
+    <div class="w-full p-2 flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-semibold">Store Details</h1>
+    </div>
+    @if (Store == null)
+    {
+        <p class="text-gray-600">Loading store details...</p>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 lg:grid-cols-4 border-b border-gray-300 items-center p-4">
+            <h2 class="text-sm font-semibold text-gray-900">@Store.Name</h2>
+            <p class="text-sm text-gray-600">Store Number: <span class="font-medium">@Store.No</span></p>
+            <p class="text-sm text-gray-600">Country: <span class="font-medium">@Store.Country</span></p>
+            <p class="text-sm text-gray-600">Address: <span class="font-medium">@Store.Address</span></p>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int StoreNo { get; set; }
+
+    [Inject]
+    public IStoreService StoreService { get; set; } = default!;
+
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    private Store? Store { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Store = await StoreService.GetStoreAsync(StoreNo);
+    }
+
+    private void NavigateBack()
+    {
+        NavigationManager.NavigateTo("/stores");
+    }
+}

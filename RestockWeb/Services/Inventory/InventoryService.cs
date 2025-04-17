@@ -22,7 +22,7 @@ namespace RestockWeb.Services.Inventory
 
         public async Task<List<StoreInventory>?> GetStoreInventoryByStoreNoAsync(int storeNo)
         {
-            return await GetAsync<List<StoreInventory>>($"{BaseUrl}/store/{storeNo}");
+            return await GetAsync<List<StoreInventory>>($"{BaseUrl}/store-inventory-by-store-no?storeNo={storeNo}");
         }
 
         public async Task<bool> UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)

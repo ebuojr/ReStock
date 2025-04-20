@@ -10,9 +10,14 @@ namespace RestockWeb.Services.Inventory
         {
         }
 
-        public async Task<DistributionCenterInventory?> GetDistributionCenterInventoryAsync(string itemNo)
+        public Task<List<DistributionCenterInventory>> GetDistributionCenterInventories()
         {
-            return await GetAsync<DistributionCenterInventory>($"{BaseUrl}/dc/{itemNo}");
+            return GetAsync<List<DistributionCenterInventory>>($"{BaseUrl}/distribution-center-inventory");
+        }
+
+        public async Task<DistributionCenterInventory?> GetDistributionCenterInventoryByItemNo(string itemNo)
+        {
+            return await GetAsync<DistributionCenterInventory>($"{BaseUrl}/distribution-center-inventory-by-item/{itemNo}");
         }
 
         public async Task<StoreInventory?> GetStoreInventoryAsync(int storeNo, string itemNo)
@@ -27,12 +32,11 @@ namespace RestockWeb.Services.Inventory
 
         public async Task<bool> UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {
-            return await PutAsync($"{BaseUrl}/dc/update", inventory);
+            return await PutAsync($"{BaseUrl}/distribution-center-inventory", inventory);
         }
 
         public async Task UpdateStoreInventoryAsync(StoreInventory inventory)
         {
-
             await PutAsync($"{BaseUrl}/update-store-inventory", inventory);
         }
     }

@@ -34,6 +34,13 @@ namespace ReStockApi.Controllers
             return Ok();
         }
 
+        [HttpGet("distribution-center-inventory")]
+        public async Task<IActionResult> GetDistributionCenterInventory()
+        {
+            var items = await _InventroyService.GetDistributionCenterInventoryAsync();
+            return Ok(items);
+        }
+
         [HttpGet("distribution-center-inventory-by-item")]
         public async Task<IActionResult> GetDistributionCenterInventory(string ItemNo)
         {

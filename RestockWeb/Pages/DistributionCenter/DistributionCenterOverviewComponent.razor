@@ -1,0 +1,128 @@
+﻿@page "/distribution-center"
+
+<PageTitle>Distribution-Center</PageTitle>
+
+<div class="w-full p-6">
+    <div class="w-full p-2 flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-semibold">Distribution Center Inventory</h1>
+        <div class="flex gap-2">
+            <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search by ItemNo..."
+            class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+        </div>
+    </div>
+    <div class="mt-8">
+        <h2 class="text-lg font-semibold mb-2">Inventory</h2>
+        @if (FilteredInventoryList == null)
+        {
+            <p class="text-gray-600">Loading inventory...</p>
+        }
+        else if (!FilteredInventoryList.Any())
+        {
+            <p class="text-gray-600">No inventory found.</p>
+        }
+        else
+        {
+            <div x-data="{quantityEditor: false}" class="w-full grid grid-cols-1 relative divide-y-1 divide-gray-300 border border-gray-300 rounded">
+                @foreach (var inv in FilteredInventoryList)
+                {
+                    <div x-on:click="quantityEditor = !quantityEditor" @onclick="() => { SelectedDistributionCenterInventory = inv; }" class="grid grid-cols-1 lg:grid-cols-3 gap-2 bg-white p-6 hover:bg-gray-50 duration-75 first:rounded-t last:rounded-b">
+                        <span class="text-sm text-gray-600">Item No: <span class="font-medium">@inv.ItemNo</span></span>
+                        <span class="text-sm text-gray-600">Quantity: <span class="font-medium">@inv.Quantity</span></span>
+                        <span class="text-sm text-gray-600">Last Updated: <span class="font-medium">@inv.LastUpdated.ToString("g")</span></span>
+                    </div>
+                }
+
+                <div x-show="quantityEditor"
+                x-cloak
+                x-transition
+                class="fixed top-0 right-0 w-lg h-screen z-[10] p-2">
+
+                    <div class="h-full bg-white border border-gray-300 shadow py-2 px-4">
+                        <!-- Close Button -->
+                        <button x-on:click="quantityEditor = false" class="absolute top-8 right-8 text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <div class="h-full flex flex-col justify-between px-2 py-2">
+                            <div>
+                                <h2 class="text-lg font-semibold mb-4">@SelectedDistributionCenterInventory.ItemNo</h2>
+                                <div>
+                                    <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+                                    <input type="number" id="quantity" @bind="SelectedDistributionCenterInventory.Quantity" class="p-2 mt-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-0" />
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button x-on:click="quantityEditor = false" @onclick="() => UpdateInventory(SelectedDistributionCenterInventory)" class="w-full bg-gray-600 text-white px-4 py-2 rounded">Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public IInventoryService InventoryService { get; set; } = default!;
+
+    [Inject]
+    public IToastService _ToastService { get; set; }
+
+    private List<DistributionCenterInventory>? InventoryList { get; set; }
+    private List<DistributionCenterInventory>? FilteredInventoryList { get; set; }
+
+    private DistributionCenterInventory SelectedDistributionCenterInventory { get; set; } = new DistributionCenterInventory();
+
+    private string _searchTerm = string.Empty;
+    private string SearchTerm
+    {
+        get => _searchTerm;
+        set
+        {
+            if (_searchTerm != value)
+            {
+                _searchTerm = value;
+                FilterInventory();
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        InventoryList = await InventoryService.GetDistributionCenterInventories();
+        FilteredInventoryList = InventoryList;
+    }
+
+    private void FilterInventory()
+    {
+        if (string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            FilteredInventoryList = InventoryList;
+        }
+        else
+        {
+            FilteredInventoryList = InventoryList?
+                .Where(inv => inv.ItemNo.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+    }
+
+    async Task UpdateInventory(DistributionCenterInventory inv)
+    {
+        await InventoryService.UpdateDistributionCenterInventoryAsync(inv);
+        var updatedInventory = await InventoryService.GetDistributionCenterInventories();
+        if (updatedInventory != null)
+        {
+            InventoryList = updatedInventory;
+            FilteredInventoryList = updatedInventory;
+            _ToastService.ShowSuccess("Inventory updated successfully.");
+        }
+        else
+            _ToastService.ShowError("Error while update / fetch inventories.");
+    }
+}

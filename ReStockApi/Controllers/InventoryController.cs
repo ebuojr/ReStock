@@ -27,7 +27,7 @@ namespace ReStockApi.Controllers
             return Ok(item ?? null);
         }
 
-        [HttpPut]
+        [HttpPut("update-store-inventory")]
         public async Task<ActionResult> UpdateStoreInventory([FromBody] Models.StoreInventory inventory)
         {
             await _InventroyService.UpdateStoreInventoryAsync(inventory);

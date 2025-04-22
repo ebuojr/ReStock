@@ -114,7 +114,7 @@
 
     async Task UpdateInventory(DistributionCenterInventory inv)
     {
-        await InventoryService.UpdateDistributionCenterInventoryAsync(inv);
+        await InventoryService.UpsertDistributionCenterInventoryAsync(inv);
         var updatedInventory = await InventoryService.GetDistributionCenterInventories();
         if (updatedInventory != null)
         {

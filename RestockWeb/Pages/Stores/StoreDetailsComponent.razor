@@ -140,7 +140,7 @@
     async Task UpdateStoreInventory(StoreInventory inv)
     {
         inv.LastUpdated = DateTime.UtcNow;
-        await InventoryService.UpdateStoreInventoryAsync(inv);
+        await InventoryService.UpsertStoreInventoryAsync(inv);
         _ToastService.ShowSuccess($"{inv.ItemNo} has been updated successfully");
     }
 

@@ -30,7 +30,7 @@ namespace ReStockApi.Controllers
         [HttpPut("update-store-inventory")]
         public async Task<ActionResult> UpdateStoreInventory([FromBody] Models.StoreInventory inventory)
         {
-            await _InventroyService.UpdateStoreInventoryAsync(inventory);
+            await _InventroyService.UpsertStoreInventoryAsync(inventory);
             return Ok();
         }
 
@@ -51,7 +51,7 @@ namespace ReStockApi.Controllers
         [HttpPut("distribution-center-inventory")]
         public async Task<ActionResult> UpdateDistributionCenterInventory([FromBody] Models.DistributionCenterInventory inventory)
         {
-            await _InventroyService.UpdateDistributionCenterInventoryAsync(inventory);
+            await _InventroyService.UpsertDistributionCenterInventoryAsync(inventory);
             return Ok();
         }
     }

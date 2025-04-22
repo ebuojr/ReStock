@@ -30,12 +30,12 @@ namespace RestockWeb.Services.Inventory
             return await GetAsync<List<StoreInventory>>($"{BaseUrl}/store-inventory-by-store-no?storeNo={storeNo}");
         }
 
-        public async Task<bool> UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
+        public async Task<bool> UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {
             return await PutAsync($"{BaseUrl}/distribution-center-inventory", inventory);
         }
 
-        public async Task UpdateStoreInventoryAsync(StoreInventory inventory)
+        public async Task UpsertStoreInventoryAsync(StoreInventory inventory)
         {
             await PutAsync($"{BaseUrl}/update-store-inventory", inventory);
         }

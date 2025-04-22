@@ -24,16 +24,31 @@ namespace ReStockApi.Services.Inventory
         public Task<List<StoreInventory>> GetStoreInventoryByStoreNoAsync(int storeNo)
             => _db.StoreInventories.Where(x => x.StoreNo == storeNo).ToListAsync();
 
-        public async Task UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
+        public async Task UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {
-            _db.DistributionCenterInventories.Update(inventory);
-            await _db.SaveChangesAsync();
+            var temp = await GetDistributionCenterInventoryAsync(inventory.ItemNo);
+            if (temp == null)
+                await _db.DistributionCenterInventories.AddAsync(inventory);
+            else
+            {
+                temp.Quantity = inventory.Quantity;
+                temp.LastUpdated = DateTime.UtcNow;
+                _db.DistributionCenterInventories.Update(temp);
+            }
         }
 
-        public Task UpdateStoreInventoryAsync(StoreInventory inventory)
+        public async Task UpsertStoreInventoryAsync(StoreInventory inventory)
         {
-            _db.StoreInventories.Update(inventory);
-            return _db.SaveChangesAsync();
+            var temp = await GetStoreInventoryAsync(inventory.StoreNo, inventory.ItemNo);
+
+            if (temp == null)
+                await _db.StoreInventories.AddAsync(inventory);
+            else
+            {
+                temp.Quantity = inventory.Quantity;
+                temp.LastUpdated = DateTime.UtcNow;
+                _db.StoreInventories.Update(temp);
+            }
         }
     }
 }

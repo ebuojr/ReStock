@@ -6,9 +6,9 @@ namespace RestockWeb.Services.Inventory
     {
         Task<List<StoreInventory>?> GetStoreInventoryByStoreNoAsync(int storeNo);
         Task<StoreInventory?> GetStoreInventoryAsync(int storeNo, string itemNo);
-        Task UpdateStoreInventoryAsync(StoreInventory inventory);
+        Task UpsertStoreInventoryAsync(StoreInventory inventory);
         Task<List<DistributionCenterInventory>> GetDistributionCenterInventories();
         Task<DistributionCenterInventory?> GetDistributionCenterInventoryByItemNo(string itemNo);
-        Task<bool> UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory);
+        Task<bool> UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory);
     }
 }

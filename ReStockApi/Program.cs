@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using ReStockApi.BackroundService;
 using ReStockApi.Models;
 using ReStockApi.Services.DataGeneration;
 using ReStockApi.Services.Inventory;
@@ -43,6 +44,9 @@ builder.Services.AddScoped<IReorderLogService, ReorderLogService>();
 
 // register the data generation service
 builder.Services.AddScoped<IDataGenerationService, DataGenerationService>();
+
+// register the background service
+builder.Services.AddHostedService<ReorderingService>();
 
 // database
 builder.Services.AddDbContext<ReStockDbContext>(options =>

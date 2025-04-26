@@ -13,6 +13,13 @@ namespace ReStockApi.Controllers
             _InventroyService = inventroyService;
         }
 
+        [HttpGet("store-inventory-with-Threshold-store-no")]
+        public async Task<IActionResult> GetStoreInventoryByStoreNoWithThresholds(int storeNo)
+        {
+            var items = await _InventroyService.GetStoreInventoryByStoreNoWithThresholdsAsync(storeNo);
+            return Ok(items);
+        }
+
         [HttpGet("store-inventory-by-store-no")]
         public async Task<IActionResult> GetStoreInventoryByStoreNo(int storeNo)
         {

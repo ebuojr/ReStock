@@ -13,7 +13,14 @@ namespace ReStockApi.Controllers
             _thresholdService = thresholdService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetThresholds()
+        {
+            var threadholds = await _thresholdService.GetThresholdsAsync();
+            return Ok(threadholds ?? null);
+        }
+
+        [HttpGet("get-by-store-item")]
         public async Task<IActionResult> GetThreshold(int storeNo, string ItemNo)
         {
             var threshold = await _thresholdService.GetThresholdAsync(storeNo, ItemNo);

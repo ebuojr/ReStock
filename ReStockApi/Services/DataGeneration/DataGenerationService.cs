@@ -52,7 +52,7 @@ namespace ReStockApi.Services.DataGeneration
             var materials = new[] { "Cotton", "Silk", "Linen", "Wool", "Denim", "Leather", "Polyester" };
 
             var productFaker = new Faker<Models.Product>()
-                .RuleFor(p => p.Name, f => $"{f.PickRandom(clothingAdjectives)} {f.PickRandom(clothingTypes)} ({f.PickRandom(materials)})")
+                .RuleFor(p => p.Name, f => $"{f.PickRandom(clothingAdjectives)} {f.PickRandom(clothingTypes)} made with {f.PickRandom(materials)}")
                 .RuleFor(p => p.Brand, f => brand)
                 .RuleFor(p => p.RetailPrice, f => f.Finance.Amount(79, 249))
                 .RuleFor(p => p.ItemNo, f => $"ZIZ-{f.Random.Replace("###-####")}")
@@ -93,6 +93,7 @@ namespace ReStockApi.Services.DataGeneration
                         ItemNo = product.ItemNo,
                         MinimumQuantity = new Random().Next(2, 5),
                         TargetQuantity = new Random().Next(10, 20),
+                        ReorderQuantity = new Random().Next(5, 10),
                         LastUpdated = DateTime.Now
                     });
         }

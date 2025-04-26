@@ -21,6 +21,9 @@ namespace ReStockApi.Services.Threshold
         public async Task<InventoryThreshold> GetThresholdAsync(int storeNo, string ItemNo)
             => await _db.InventoryThresholds.FirstOrDefaultAsync(threshold => threshold.StoreNo == storeNo && threshold.ItemNo == ItemNo);
 
+        public async Task<IEnumerable<InventoryThreshold>> GetThresholdsAsync()
+            => await _db.InventoryThresholds.ToListAsync();
+
         public async Task<IEnumerable<InventoryThreshold>> GetThresholdsByStoreNoAsync(int storeNo)
             => await _db.InventoryThresholds.Where(threshold => threshold.StoreNo == storeNo).ToListAsync();
 

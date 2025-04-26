@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReStockApi.DTOs;
 using ReStockApi.Models;
+using System.Security.Cryptography;
 
 namespace ReStockApi.Services.Inventory
 {
@@ -23,6 +25,46 @@ namespace ReStockApi.Services.Inventory
 
         public Task<List<StoreInventory>> GetStoreInventoryByStoreNoAsync(int storeNo)
             => _db.StoreInventories.Where(x => x.StoreNo == storeNo).ToListAsync();
+
+        public async Task<List<StoresInventoryWithThresholdDTO>> GetStoreInventoryByStoreNoWithThresholdsAsync(int storeNo)
+        {
+            var currentQty = await _db.StoreInventories
+                .Where(x => x.StoreNo == storeNo)
+                .Select(x => new StoresInventoryWithThresholdDTO
+                {
+                    StoreNo = x.StoreNo,
+                    ItemNo = x.ItemNo,
+                    CurrentQuantity = x.Quantity
+                })
+                .ToListAsync();
+
+            var thresholds = await _db.InventoryThresholds
+                .Where(x => x.StoreNo == storeNo)
+                .Select(x => new StoresInventoryWithThresholdDTO
+                {
+                    StoreNo = x.StoreNo,
+                    ItemNo = x.ItemNo,
+                    MinimumQuantity = x.MinimumQuantity,
+                    TargetQuantity = x.TargetQuantity,
+                    ReorderQuantity = x.ReorderQuantity
+                })
+                .ToListAsync();
+
+            return currentQty.Join(
+                thresholds,
+                current => new { current.StoreNo, current.ItemNo },
+                threshold => new { threshold.StoreNo, threshold.ItemNo },
+                (current, threshold) => new StoresInventoryWithThresholdDTO
+                {
+                    StoreNo = current.StoreNo,
+                    ItemNo = current.ItemNo,
+                    CurrentQuantity = current.CurrentQuantity,
+                    MinimumQuantity = threshold.MinimumQuantity,
+                    TargetQuantity = threshold.TargetQuantity,
+                    ReorderQuantity = threshold.ReorderQuantity
+                })
+                .ToList();
+        }
 
         public async Task UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {

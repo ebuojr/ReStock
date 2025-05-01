@@ -14,6 +14,13 @@ namespace ReStockApi.Controllers
             _reorderService = reorderService;
         }
 
+        [HttpPost("create-potential-orders")]
+        public async Task<IActionResult> CreatePotentialOrders([FromBody] int storeNo)
+        {
+            var result = await _reorderService.CreatePotentialOrdersByStoreNoAsync(storeNo);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> ProcessReorder([FromBody] Reorder reorder)
         {

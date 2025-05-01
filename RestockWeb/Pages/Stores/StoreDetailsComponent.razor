@@ -2,13 +2,25 @@
 
 <PageTitle>Store Details</PageTitle>
 
-<div class="w-full p-6">
+<RestockWeb.Pages.Common.BlockComponent Show="@Loading" />
+
+
+<div x-data="{potentialOrdersComponent: false}" class="w-full p-6">
     <div class="w-full p-2 flex justify-between items-center mb-4">
         <h1 class="text-2xl font-semibold">Store Details</h1>
         <div class="flex gap-2">
+
+            <!-- CreatePotentialOrders Button -->
+            <button @onclick="CreatePotentialOrders"
+            x-on:click="potentialOrdersComponent = true"
+            class="text-sm bg-green-100 text-green-600 border-green-400 border px-4 py-2 rounded">
+                Create Potential Orders
+            </button>
+
+
             <!-- Search Input -->
             <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search inventory by ItemNo..."
-                   class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+            class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
         </div>
     </div>
     @if (Store == null)
@@ -63,9 +75,9 @@
                     }
 
                     <div x-show="quantityEditor"
-                         x-cloak
-                         x-transition
-                         class="fixed top-0 right-0 w-lg h-screen z-[10] p-2">
+                    x-cloak
+                    x-transition
+                    class="fixed top-0 right-0 w-lg h-screen z-[10] p-2">
 
                         <div class="h-full bg-white border border-gray-300 shadow py-2 px-4">
                             <!-- Close Button -->
@@ -106,6 +118,14 @@
                 </div>
             }
         </div>
+
+        <!--Potential Orders-->
+        <div x-show="potentialOrdersComponent"
+          x-cloak
+          x-transition
+          class="fixed w-1/2 h-1/2 bg-white bg-opacity-50 z-[20] flex justify-center items-center border rounded">
+           <PotentialOrdersComponent Reorders="PotentialOrders" />
+        </div>
     }
 </div>
 
@@ -118,6 +138,9 @@
 
     [Inject]
     public IInventoryService InventoryService { get; set; } = default!;
+
+    [Inject]
+    public IReorderService ReorderService { get; set; } = default!;
 
     [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;
@@ -145,6 +168,10 @@
         }
     }
 
+    public List<Models.Reorder> PotentialOrders { get; set; } = new();
+
+    public bool Loading { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         Store = await StoreService.GetStoreAsync(StoreNo);
@@ -171,6 +198,25 @@
         // inv.LastUpdated = DateTime.UtcNow;
         // await InventoryService.UpsertStoreInventoryAsync(inv);
         _ToastService.ShowSuccess($"{inv.ItemNo} has been updated successfully");
+    }
+
+    async Task CreatePotentialOrders()
+    {
+        try
+        {
+            Loading = true;
+            PotentialOrders = await ReorderService.CreatePotentialOrdersByStoreNoAsync(StoreNo);
+            Console.WriteLine($"Potential orders created: {PotentialOrders.Count()}");
+            _ToastService.ShowSuccess("Potential orders have been created successfully");
+        }
+        catch (Exception ex)
+        {
+            _ToastService.ShowError($"Error creating potential orders: {ex.Message}");
+        }
+        finally
+        {
+            Loading = false;
+        }
     }
 
     private void NavigateBack()

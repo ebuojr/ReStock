@@ -10,29 +10,14 @@ namespace RestockWeb.Services.Reorder
         {
         }
         
-        public async Task<bool> CreateReorderAsync(Models.Reorder reorder)
+        public async Task<List<Models.Reorder>> CreatePotentialOrdersByStoreNoAsync(int storeNo)
         {
-            return await PostAsync($"{BaseUrl}/create", reorder);
+            return await PostAsyncWithResponse<List<Models.Reorder>, int>($"{BaseUrl}/create-potential-orders", storeNo);
         }
-        
-        public async Task<Models.Reorder?> GetReorderAsync(int id)
+
+        public Task<bool> ProcessReorderAsync(List<Models.Reorder> reorders)
         {
-            return await GetAsync<Models.Reorder>($"{BaseUrl}/get/{id}");
-        }
-        
-        public async Task<List<Models.Reorder>?> GetReordersAsync()
-        {
-            return await GetAsync<List<Models.Reorder>>($"{BaseUrl}/all");
-        }
-        
-        public async Task<bool> ProcessReorderAsync(int id)
-        {
-            return await PostAsync($"{BaseUrl}/process/{id}", new { });
-        }
-        
-        public async Task<List<ReOrderLog>?> GetReorderLogsAsync()
-        {
-            return await GetAsync<List<ReOrderLog>>($"{BaseUrl}/logs");
+            return PostAsync($"{BaseUrl}/process-reorders", reorders);
         }
     }
 }

@@ -21,11 +21,13 @@ namespace ReStockApi.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ProcessReorder([FromBody] Reorder reorder)
+        [HttpPost("process-reorders")]
+        public async Task<IActionResult> ProcessReorder([FromBody] List<Reorder> reorder)
         {
-            var result = await _reorderService.ProcessReorderAsync(reorder);
-            return Ok(result);
+            await _reorderService.ProcessReorderAsync(reorder);
+            return Ok();
         }
+
+
     }
 }

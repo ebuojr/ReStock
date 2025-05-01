@@ -1,0 +1,29 @@
+﻿<div class="grid grid-cols-5 gap-4 p-4 overflow-y-auto">
+    <!-- Header Row -->
+    <div class="font-bold text-center bg-gray-200">Store No</div>
+    <div class="font-bold text-center bg-gray-200">Item No</div>
+    <div class="font-bold text-center bg-gray-200">Quantity</div>
+    <div class="font-bold text-center bg-gray-200">Created At</div>
+
+    <!-- Data Rows -->
+    @if (Reorders != null && Reorders.Any())
+    {
+        @foreach (var reorder in Reorders)
+        {
+            <div class="text-center">@reorder.Id</div>
+            <div class="text-center">@reorder.StoreNo</div>
+            <div class="text-center">@reorder.ItemNo</div>
+            <div class="text-center">@reorder.Quantity</div>
+            <div class="text-center">@reorder.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</div>
+        }
+    }
+    else
+    {
+        <div class="col-span-5 text-center">No data available</div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<Models.Reorder> Reorders { get; set; } = new();
+}

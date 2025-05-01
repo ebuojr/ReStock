@@ -1,8 +1,8 @@
-﻿using ReStockApi.Models;
+﻿using ReStockApi.DTOs;
+using ReStockApi.Models;
 using ReStockApi.Services.Inventory;
 using ReStockApi.Services.ReorderLog;
 using ReStockApi.Services.Store;
-using System.Security.Cryptography;
 
 namespace ReStockApi.Services.Reorder
 {
@@ -45,16 +45,16 @@ namespace ReStockApi.Services.Reorder
                     if (reorderAmount < item.ReorderQuantity)
                     {
                         Console.WriteLine($"The minimum ordering for item {item.ItemNo} in store {storeNo} is {item.ReorderQuantity}.");
-                        // Log the minimum ordering requirement
-                        //await _ReorderLogService
-                        //    .LogAsync(
-                        //    storeNo,
-                        //    item.ItemNo,
-                        //    reorderAmount,
-                        //    "Minimum Reorder",
-                        //    $"The minimum ordering for item {item.ItemNo} in store {storeNo} is {item.ReorderQuantity}.", false);
 
-                        reorderAmount = item.ReorderQuantity;
+                        // Log the minimum ordering requirement
+                        await _ReorderLogService
+                            .LogAsync(
+                            storeNo,
+                            item.ItemNo,
+                            reorderAmount,
+                            ReorderLogType.MinimumReorder.ToString(),
+                            $"The minimum ordering for item {item.ItemNo} in store {storeNo} is {item.ReorderQuantity}.", false);
+
                         continue;
                     }
 
@@ -64,41 +64,73 @@ namespace ReStockApi.Services.Reorder
                     // check dc inventory
                     var dcInventory = await _InventoryService.GetDistributionCenterInventoryAsync(item.ItemNo);
 
-                    if (reorderAmount > dcInventory.Quantity)
+                    if (dcInventory.Quantity < 1)
+                        throw new ArgumentNullException(nameof(dcInventory), "Distribution center inventory is less than 1.");
+
+                    if (dcInventory.Quantity < reorderAmount)
                     {
-                        Console.WriteLine($"The reorder amount for item {item.ItemNo} in store {storeNo} is greater than the DC inventory.");
-                        // Log the DC inventory check
-                        //await _ReorderLogService
-                        //    .LogAsync(
-                        //    storeNo,
-                        //    item.ItemNo,
-                        //    reorderAmount,
-                        //    "DC Inventory",
-                        //    $"The reorder amount for item {item.ItemNo} in store {storeNo} is greater than the DC inventory.", false);
-                        reorderAmount = dcInventory.Quantity;
+                        Console.WriteLine($"The distribution center inventory for item {item.ItemNo} is less than the reorder amount.");
+                        // Log the distribution center inventory
+                        await _ReorderLogService
+                            .LogAsync(
+                            storeNo,
+                            item.ItemNo,
+                            reorderAmount,
+                            ReorderLogType.DCInventory.ToString(),
+                            $"The distribution center inventory for item {item.ItemNo} is less than the reorder amount.", false);
+
+                        continue;
                     }
 
                     result.Add(new Models.Reorder
                     {
                         StoreNo = storeNo,
                         ItemNo = item.ItemNo,
-                        Quantity = reorderAmount
+                        Quantity = reorderAmount,
+                        CreatedAt = DateTime.UtcNow,
                     });
                 }
             }
 
             return result;
-
-            //await _db.Reorders.AddRangeAsync(result);
-            //await _db.SaveChangesAsync();
         }
 
-
-        public async Task<bool> ProcessReorderAsync(Models.Reorder reorder)
+        public async Task ProcessReorderAsync(List<Models.Reorder> reorders)
         {
-            await _db.Reorders.AddAsync(reorder);
+            List<Models.Reorder> reorderToInsert = new();
+
+            var dcInventory = await _InventoryService.GetDistributionCenterInventoryAsync();
+
+            foreach (var reorder in reorders)
+            {
+                var dcItem = dcInventory.FirstOrDefault(x => x.ItemNo == reorder.ItemNo);
+
+                // check if the distribution center inventory
+                // is less than the reorder amount
+                if (dcItem.Quantity < reorder.Quantity)
+                    continue;
+
+                // update the distribution center inventory
+                dcItem.Quantity -= reorder.Quantity;
+                // update the store inventory
+                var storeInventory = await _InventoryService.GetStoreInventoryAsync(reorder.StoreNo, reorder.ItemNo);
+
+                storeInventory.Quantity += reorder.Quantity;
+                // update the inventories
+                await _InventoryService.UpsertDistributionCenterInventoryAsync(dcItem);
+                await _InventoryService.UpsertStoreInventoryAsync(storeInventory);
+
+                // add the reorder to the list
+                reorderToInsert.Add(reorder);
+            }
+
+            await InsertReorderAsync(reorderToInsert);
+        }
+
+        public async Task InsertReorderAsync(List<Models.Reorder> reorders)
+        {
+            await _db.Reorders.AddRangeAsync(reorders);
             _db.SaveChanges();
-            return true;
         }
     }
 }

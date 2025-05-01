@@ -36,6 +36,7 @@ namespace ReStockApi.Controllers
                 await _DataGenerationService.TruncateTableByTableName("StoreInventories");
                 await _DataGenerationService.TruncateTableByTableName("DistributionCenterInventories");
                 await _DataGenerationService.TruncateTableByTableName("InventoryThresholds");
+                await _DataGenerationService.TruncateTableByTableName("ReOrderLogs");
 
                 await _DataGenerationService.GenerateProductItems();
                 await _DataGenerationService.GenerateDCInventory();

@@ -5,22 +5,22 @@
 <RestockWeb.Pages.Common.BlockComponent Show="@Loading" />
 
 
-<div x-data="{potentialOrdersComponent: false}" class="w-full p-6">
+<div x-data="{potentialOrdersComponent: false}" class="relative w-full p-6">
     <div class="w-full p-2 flex justify-between items-center mb-4">
         <h1 class="text-2xl font-semibold">Store Details</h1>
         <div class="flex gap-2">
 
             <!-- CreatePotentialOrders Button -->
             <button @onclick="CreatePotentialOrders"
-            x-on:click="potentialOrdersComponent = true"
-            class="text-sm bg-green-100 text-green-600 border-green-400 border px-4 py-2 rounded">
+                    x-on:click="potentialOrdersComponent = true"
+                    class="text-sm bg-green-100 text-green-600 border-green-400 border px-4 py-2 rounded">
                 Create Potential Orders
             </button>
 
 
             <!-- Search Input -->
             <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search inventory by ItemNo..."
-            class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+                   class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
         </div>
     </div>
     @if (Store == null)
@@ -75,13 +75,14 @@
                     }
 
                     <div x-show="quantityEditor"
-                    x-cloak
-                    x-transition
-                    class="fixed top-0 right-0 w-lg h-screen z-[10] p-2">
+                         x-cloak
+                         x-transition
+                         class="fixed top-0 right-0 w-lg h-screen z-[10] p-2">
 
                         <div class="h-full bg-white border border-gray-300 shadow py-2 px-4">
                             <!-- Close Button -->
-                            <button x-on:click="quantityEditor = false" class="absolute top-8 right-8 text-gray-500 hover:text-gray-700">
+                            <button x-on:click="quantityEditor = false" class="absolute flex items-center p-2 top-8 right-8 text-gray-500 hover:text-gray-700">
+                                Cancel
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -120,11 +121,13 @@
         </div>
 
         <!--Potential Orders-->
-        <div x-show="potentialOrdersComponent"
-          x-cloak
-          x-transition
-          class="fixed w-1/2 h-1/2 bg-white bg-opacity-50 z-[20] flex justify-center items-center border rounded">
-           <PotentialOrdersComponent Reorders="PotentialOrders" />
+        <div x-show="potentialOrdersComponent" class="fixed inset-0 bg-gray-900/20 z-[20] flex justify-center items-start pt-10">
+           <div x-show="potentialOrdersComponent"
+                x-cloak
+                x-transition
+                x-on:click.away="potentialOrdersComponent = false" class="bg-white max-w-7xl p-4 border border-neutral-200 rounded-lg shadow-lg">
+               <PotentialOrdersComponent Reorders="PotentialOrders" />
+           </div>
         </div>
     }
 </div>
@@ -138,6 +141,9 @@
 
     [Inject]
     public IInventoryService InventoryService { get; set; } = default!;
+
+    [Inject]
+    public IThresholdService ThresholdService { get; set; } = default!;
 
     [Inject]
     public IReorderService ReorderService { get; set; } = default!;
@@ -195,9 +201,26 @@
 
     async Task UpdateStoreInventory(StoresInventoryWithThresholdDTO inv)
     {
-        // inv.LastUpdated = DateTime.UtcNow;
-        // await InventoryService.UpsertStoreInventoryAsync(inv);
-        _ToastService.ShowSuccess($"{inv.ItemNo} has been updated successfully");
+        try
+        {
+            var storeInventory = await InventoryService.GetStoreInventoryAsync(inv.StoreNo, inv.ItemNo);
+            var threshold = await ThresholdService.GetThresholdAsync(inv.StoreNo, inv.ItemNo);
+
+            storeInventory.Quantity = inv.CurrentQuantity;
+            threshold.MinimumQuantity = inv.MinimumQuantity;
+            threshold.ReorderQuantity = inv.ReorderQuantity;
+            threshold.TargetQuantity = inv.TargetQuantity;
+
+            await InventoryService.UpsertStoreInventoryAsync(storeInventory);
+            await ThresholdService.UpdateThresholdAsync(threshold);
+
+            _ToastService.ShowSuccess($"{inv.ItemNo} has been updated successfully");
+        }
+        catch (Exception ex)
+        {
+            _ToastService.ShowError($"Error while update inventory & threshold: {ex.Message}");
+        }
+
     }
 
     async Task CreatePotentialOrders()

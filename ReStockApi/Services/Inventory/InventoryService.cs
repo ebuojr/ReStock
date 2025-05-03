@@ -69,14 +69,21 @@ namespace ReStockApi.Services.Inventory
         public async Task UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {
             var temp = await GetDistributionCenterInventoryAsync(inventory.ItemNo);
+
             if (temp == null)
+            {
+                inventory.LastUpdated = DateTime.UtcNow;
                 await _db.DistributionCenterInventories.AddAsync(inventory);
+            }
             else
             {
+                // Update existing inventory record
                 temp.Quantity = inventory.Quantity;
                 temp.LastUpdated = DateTime.UtcNow;
                 _db.DistributionCenterInventories.Update(temp);
             }
+
+            await _db.SaveChangesAsync();
         }
 
         public async Task UpsertStoreInventoryAsync(StoreInventory inventory)
@@ -84,13 +91,18 @@ namespace ReStockApi.Services.Inventory
             var temp = await GetStoreInventoryAsync(inventory.StoreNo, inventory.ItemNo);
 
             if (temp == null)
+            {
+                inventory.LastUpdated = DateTime.UtcNow;
                 await _db.StoreInventories.AddAsync(inventory);
+            }
             else
             {
                 temp.Quantity = inventory.Quantity;
                 temp.LastUpdated = DateTime.UtcNow;
                 _db.StoreInventories.Update(temp);
             }
+
+            await _db.SaveChangesAsync();
         }
     }
 }

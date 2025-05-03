@@ -20,14 +20,14 @@ namespace ReStockApi.Controllers
             return Ok(items);
         }
 
-        [HttpGet("store-inventory-by-store-no")]
+        [HttpGet("store")]
         public async Task<IActionResult> GetStoreInventoryByStoreNo(int storeNo)
         {
             var items = await _InventroyService.GetStoreInventoryByStoreNoAsync(storeNo);
             return Ok(items);
         }
 
-        [HttpGet("store-inventory-by-item")]
+        [HttpGet("store-item")]
         public async Task<IActionResult> GetStoreInventory(int storeNo, string ItemNo)
         {
             var item = await _InventroyService.GetStoreInventoryAsync(storeNo, ItemNo);

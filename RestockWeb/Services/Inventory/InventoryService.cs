@@ -23,12 +23,12 @@ namespace RestockWeb.Services.Inventory
 
         public async Task<StoreInventory?> GetStoreInventoryAsync(int storeNo, string itemNo)
         {
-            return await GetAsync<StoreInventory>($"{BaseUrl}/store/{storeNo}/{itemNo}");
+            return await GetAsync<StoreInventory>($"{BaseUrl}/store-item?storeNo={storeNo}&ItemNo={itemNo}");
         }
 
         public async Task<List<StoreInventory>?> GetStoreInventoryByStoreNoAsync(int storeNo)
         {
-            return await GetAsync<List<StoreInventory>>($"{BaseUrl}/store-inventory-by-store-no?storeNo={storeNo}");
+            return await GetAsync<List<StoreInventory>>($"{BaseUrl}/store?storeNo={storeNo}");
         }
 
         public async Task<List<StoresInventoryWithThresholdDTO>> GetStoreInventoryByStoreNoWithThresholdsAsync(int storeNo)

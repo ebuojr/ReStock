@@ -27,7 +27,7 @@ namespace RestockWeb.Services.Threshold
 
         public async Task<InventoryThreshold?> GetThresholdAsync(int storeNo, string itemNo)
         {
-            return await GetAsync<InventoryThreshold>($"{BaseUrl}/get/{storeNo}/{itemNo}");
+            return await GetAsync<InventoryThreshold>($"{BaseUrl}/store-item?storeNo={storeNo}&ItemNo={itemNo}");
         }
 
         public async Task<List<InventoryThreshold>?> GetThresholdsByStoreAsync(int storeNo)

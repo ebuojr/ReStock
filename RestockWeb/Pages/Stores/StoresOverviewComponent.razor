@@ -20,13 +20,18 @@
     </div>
 
     <!-- Responsive store grid -->
-    <div class="w-full grid grid-cols-1 gap-4">
+    <div class="w-full grid grid-cols-1 gap-2">
         @foreach (var store in FilteredStores)
         {
-            <div class="bg-white rounded border border-gray-300 flex flex-col relative p-4 hover:bg-gray-50 duration-75" style="overflow: visible;">
+            <div class="bg-white rounded border border-gray-300 flex flex-col relative px-2 py-4 hover:bg-gray-50 duration-75" style="overflow: visible;">
                 <!-- Store Details -->
                 <div class="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
-                    <a href="/stores/@store.No" class="text-sm font-semibold text-gray-900 truncate hover:underline">@store.Name</a>
+                    <a href="/stores/@store.No" class="flex items-center gap-1 text-sm font-semibold text-gray-900 truncate hover:underline hover:text-blue-600 duration-75">
+                       @store.Name
+                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                           <path fill-rule="evenodd" d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                       </svg>
+                    </a>
                     <p class="text-sm text-gray-600">Store Number: <span class="font-medium">@store.No</span></p>
                     <p class="text-sm text-gray-600">Country: <span class="font-medium">@store.Country</span></p>
                     <p class="text-sm text-gray-600">Address: <span class="font-medium">@store.Address</span></p>

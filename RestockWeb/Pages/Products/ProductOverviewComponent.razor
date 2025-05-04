@@ -1,218 +1,219 @@
 ﻿    @page "/products"
 
-    <PageTitle>Products</PageTitle>
+<PageTitle>Products</PageTitle>
 
-    <div class="w-full p-6 relative" x-data="{ editopen: false }">
+<div class="w-full p-6 relative" x-data="{ editopen: false }">
 
-        <!-- Header Section -->
-        <div class="w-full p-2 flex justify-between items-center mb-4">
-            <h1 class="text-2xl font-semibold">Product Overview</h1>
-            <div class="flex gap-2">
-                <!-- Search Input -->
-                <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search products..."
-                       class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
-                <!-- Create New Product Button -->
-                <button x-on:click="editopen = true" @onclick="() => { SelectedProduct = new() {Id = 0}; }" class="bg-gray-600 text-sm text-white px-4 py-1.5 rounded">
-                    Create New Product
-                </button>
-            </div>
-        </div>
-
-        <!-- Responsive product grid -->
-        <div class="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            @foreach (var product in FilteredProducts)
-            {
-                <div class="bg-white rounded border border-gray-300 flex flex-col overflow-hidden relative">
-                    <!-- Product Image -->
-                    <div class="h-48 bg-gray-100">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23666' font-family='Arial' font-size='20'%3EPlaceholder%3C/text%3E%3C/svg%3E" alt="Product Image" class="w-full h-full object-cover" />
-                    </div>
-                    <!-- Product Details -->
-                    <div class="p-4 flex flex-col gap-2">
-                    <h2 class="text-sm font-semibold text-gray-400 truncate">@product.ItemNo</h2>
-                        <h2 class="text-lg font-semibold text-gray-900 truncate">@product.Name</h2>
-                        <p class="text-sm text-gray-600">Brand: <span class="font-medium">@product.Brand</span></p>
-                        <p class="text-sm text-gray-600">Price: <span class="font-medium">@product.RetailPrice DKK</span></p>
-                    </div>
-
-                    <!-- Action Menu -->
-                    <div class="absolute p-4 z-[10] end-0 bottom-0" x-data="{ open: false }">
-                        <button @click="open = !open" class="text-gray-500 hover:text-gray-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v.01M12 12v.01M12 18v.01" />
-                            </svg>
-                        </button>
-                        <div x-transition x-show="open" x-on:click.away="open = false" class="absolute right-10 bottom-6 w-48 bg-white shadow border border-gray-300 rounded z-20">
-                            <ul>
-                                <li>
-                                    <button x-on:click="open = false; editopen = true" @onclick="() => { SelectedProduct = product; }" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded hover:underline">Update product</button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-
-        <!--edit modal-->
-        <div x-show="editopen"
-             x-cloak
-             x-transition
-             class="fixed top-0 right-0 w-lg h-screen bg-white z-[10] p-2 border border-gray-300 shadow">
-
-            <!-- Close Button -->
-            <button x-on:click="editopen = false" class="absolute top-8 right-4 text-gray-500 hover:text-gray-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
+    <!-- Header Section -->
+    <div class="w-full p-2 flex justify-between items-center mb-4">
+        <h1 class="text-2xl font-semibold">Product Overview</h1>
+        <div class="flex gap-2">
+            <!-- Search Input -->
+            <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search products..."
+                   class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+            <!-- Create New Product Button -->
+            <button x-on:click="editopen = true" @onclick="() => { SelectedProduct = new() {Id = 0}; }" class="bg-gray-600 text-sm text-white px-4 py-1.5 rounded">
+                Create New Product
             </button>
-
-            <div class="px-4 py-6">
-                <h1 class="text-xl font-bold text-gray-400">Product Info</h1>
-
-                <div class="mt-4 space-y-4">
-                    <!-- Item Number Input -->
-                    <div>
-                        <label for="itemNo" class="block text-sm font-medium text-gray-700">Item Number</label>
-                        <input id="itemNo" type="text" @bind="SelectedProduct.ItemNo" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
-                    </div>
-
-                    <!-- Name Input -->
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                        <input id="name" type="text" @bind="SelectedProduct.Name" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
-                    </div>
-
-                    <!-- Brand Input -->
-                    <div>
-                        <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
-                        <input id="brand" type="text" @bind="SelectedProduct.Brand" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
-                    </div>
-
-                    <!-- Retail Price Input -->
-                    <div>
-                        <label for="retailPrice" class="block text-sm font-medium text-gray-700">Retail Price</label>
-                        <input id="retailPrice" type="number" @bind="SelectedProduct.RetailPrice" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
-                    </div>
-
-                    <!-- Is Active Checkbox -->
-                    <div>
-                        <label for="isActive" class="inline-flex items-center">
-                            <input id="isActive" type="checkbox" @bind="SelectedProduct.IsActive" class="form-checkbox h-5 w-5 text-blue-600" />
-                            <span class="ml-2 text-sm text-gray-700">Is Active</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="absolute bottom-4 w-full space-y-2 text-sm">
-
-                @if (SelectedProduct.Id != 0)
-                {
-                    <button @onclick="() => UpdateProduct(SelectedProduct)" x-on:click="editopen = false;" class="w-full bg-gray-600 text-white px-6 py-2 rounded transition-all">
-                        Save Changes
-                    </button>
-                    <button @onclick="() => DeleteProduct(SelectedProduct)" x-on:click="editopen = false;" class="w-full bg-white text-gray-600 px-6 py-2 rounded hover:bg-gray-200 transition-all">
-                        Remove Product
-                    </button>
-                }
-                else
-                {
-                    <button @onclick="() => CreateNewProduct(SelectedProduct)" x-on:click="editopen = false;" class="w-full bg-gray-600 text-white px-6 py-2 rounded transition-all">
-                        Create New Product
-                    </button>
-                }
-            </div>
         </div>
     </div>
 
-    @code {
-
-        [Inject]
-        public IProductService _ProductService { get; set; } = default!;
-
-        public List<Product> Products { get; set; } = new List<Product>();
-        public List<Product> FilteredProducts { get; set; } = new List<Product>();
-
-        private string _searchTerm = string.Empty;
-        private string SearchTerm
+    <!-- Responsive product grid -->
+    <div class="w-full grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        @foreach (var product in FilteredProducts)
         {
-            get => _searchTerm;
-            set
-            {
-                if (_searchTerm != value)
-                {
-                    _searchTerm = value;
-                    FilterProducts();
-                }
-            }
+            <div class="bg-white rounded border border-gray-300 flex flex-col overflow-hidden relative">
+                <!-- Product Image -->
+                <div class="h-48 bg-gray-100">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23666' font-family='Arial' font-size='20'%3EPlaceholder%3C/text%3E%3C/svg%3E" alt="Product Image" class="w-full h-full object-cover" />
+                </div>
+                <!-- Product Details -->
+                <div class="p-4 flex flex-col gap-2">
+                    <h2 class="text-sm font-semibold text-gray-400 truncate">@product.ItemNo</h2>
+                    <h2 class="text-lg font-semibold text-gray-900 truncate">@product.Name</h2>
+                    <p class="text-sm text-gray-600">Brand: <span class="font-medium">@product.Brand</span></p>
+                    <p class="text-sm text-gray-600">Price: <span class="font-medium">@product.RetailPrice DKK</span></p>
+                </div>
+
+                <!-- Action Menu -->
+                <div class="absolute p-4 z-[10] end-0 bottom-0" x-data="{ open: false }">
+                    <button @click="open = !open" class="text-gray-500 hover:text-gray-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v.01M12 12v.01M12 18v.01" />
+                        </svg>
+                    </button>
+                    <div x-transition x-show="open" x-on:click.away="open = false" class="absolute right-10 bottom-6 w-48 bg-white shadow border border-gray-300 rounded z-20">
+                        <ul>
+                            <li>
+                                <button x-on:click="open = false; editopen = true" @onclick="() => { SelectedProduct = product; }" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded hover:underline">Update product</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         }
-        private Product SelectedProduct { get; set; } = new Product();
+    </div>
 
+    <!--edit modal-->
+    <div x-show="editopen"
+         x-cloak
+         x-transition
+         class="fixed top-0 right-0 w-lg h-screen bg-white z-[10] p-2 border border-gray-300 shadow">
 
-        protected override async Task OnInitializedAsync()
-        {
-            Products = await _ProductService.GetProductsAsync();
-            FilteredProducts = Products;
-        }
+        <!-- Close Button -->
+        <button x-on:click="editopen = false" class="absolute top-8 right-4 text-gray-500 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
 
-        private void FilterProducts()
-        {
-            if (string.IsNullOrWhiteSpace(SearchTerm))
+        <div class="px-4 py-6">
+            <h1 class="text-xl font-bold text-gray-400">Product Info</h1>
+
+            <div class="mt-4 space-y-4">
+                <!-- Item Number Input -->
+                <div>
+                    <label for="itemNo" class="block text-sm font-medium text-gray-700">Item Number</label>
+                    <input id="itemNo" type="text" @bind="SelectedProduct.ItemNo" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
+                </div>
+
+                <!-- Name Input -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                    <input id="name" type="text" @bind="SelectedProduct.Name" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
+                </div>
+
+                <!-- Brand Input -->
+                <div>
+                    <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+                    <input id="brand" type="text" @bind="SelectedProduct.Brand" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
+                </div>
+
+                <!-- Retail Price Input -->
+                <div>
+                    <label for="retailPrice" class="block text-sm font-medium text-gray-700">Retail Price</label>
+                    <input id="retailPrice" type="number" @bind="SelectedProduct.RetailPrice" class="mt-1 block w-full border border-gray-300 rounded px-4 py-2 text-sm" />
+                </div>
+
+                <!-- Is Active Checkbox -->
+                <div>
+                    <label for="isActive" class="inline-flex items-center">
+                        <input id="isActive" type="checkbox" @bind="SelectedProduct.IsActive" class="form-checkbox h-5 w-5 text-blue-600" />
+                        <span class="ml-2 text-sm text-gray-700">Is Active</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="absolute bottom-4 w-full space-y-2 text-sm">
+
+            @if (SelectedProduct.Id != 0)
             {
-                FilteredProducts = Products;
+                <button @onclick="() => UpdateProduct(SelectedProduct)" x-on:click="editopen = false;" class="w-full bg-gray-600 text-white px-6 py-2 rounded transition-all">
+                    Save Changes
+                </button>
+                <button @onclick="() => DeleteProduct(SelectedProduct)" x-on:click="editopen = false;" class="w-full bg-white text-gray-600 px-6 py-2 rounded hover:bg-gray-200 transition-all">
+                    Remove Product
+                </button>
             }
             else
             {
-                FilteredProducts = Products.Where(p => p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
-                                                       p.Brand.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+                <button @onclick="() => CreateNewProduct(SelectedProduct)" x-on:click="editopen = false;" class="w-full bg-gray-600 text-white px-6 py-2 rounded transition-all">
+                    Create New Product
+                </button>
             }
-        }
+        </div>
+    </div>
+</div>
 
-        async Task CreateNewProduct(Product product)
+@code {
+
+    [Inject]
+    public IProductService _ProductService { get; set; } = default!;
+
+    public List<Product> Products { get; set; } = new List<Product>();
+    public List<Product> FilteredProducts { get; set; } = new List<Product>();
+
+    private string _searchTerm = string.Empty;
+    private string SearchTerm
+    {
+        get => _searchTerm;
+        set
         {
-            try
+            if (_searchTerm != value)
             {
-                var newProduct = await _ProductService.CreateProductAsync(product);
-                if (newProduct)
-                    Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
-
-                this.StateHasChanged();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        async Task UpdateProduct(Product product)
-        {
-            try
-            {
-                var updatedProduct = await _ProductService.UpdateProductAsync(product);
-                if (updatedProduct != null)
-                    Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        async Task DeleteProduct(Product product)
-        {
-            try
-            {
-                var deletedProduct = await _ProductService.DeleteProductAsync(product.Id);
-                if (deletedProduct)
-                    Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
-
-                this.StateHasChanged();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
+                _searchTerm = value;
+                FilterProducts();
             }
         }
     }
+    private Product SelectedProduct { get; set; } = new Product();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Products = await _ProductService.GetProductsAsync();
+        FilteredProducts = Products;
+    }
+
+    private void FilterProducts()
+    {
+        if (string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            FilteredProducts = Products;
+        }
+        else
+        {
+            FilteredProducts = Products.Where(p => p.ItemNo.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                                   p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                                                   p.Brand.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+    }
+
+    async Task CreateNewProduct(Product product)
+    {
+        try
+        {
+            var newProduct = await _ProductService.CreateProductAsync(product);
+            if (newProduct)
+                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+
+            this.StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    async Task UpdateProduct(Product product)
+    {
+        try
+        {
+            var updatedProduct = await _ProductService.UpdateProductAsync(product);
+            if (updatedProduct != null)
+                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    async Task DeleteProduct(Product product)
+    {
+        try
+        {
+            var deletedProduct = await _ProductService.DeleteProductAsync(product.Id);
+            if (deletedProduct)
+                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+
+            this.StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

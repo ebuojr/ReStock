@@ -5,6 +5,7 @@ using ReStockApi.BackroundService;
 using ReStockApi.Models;
 using ReStockApi.Services.DataGeneration;
 using ReStockApi.Services.Inventory;
+using ReStockApi.Services.JobLastRunService;
 using ReStockApi.Services.Product;
 using ReStockApi.Services.Reorder;
 using ReStockApi.Services.ReorderLog;
@@ -43,6 +44,7 @@ builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
 builder.Services.AddScoped<IThresholdService, ThresholdService>();
 builder.Services.AddScoped<IReorderService, ReorderService>();
 builder.Services.AddScoped<IReorderLogService, ReorderLogService>();
+builder.Services.AddScoped<IJobLastRunService, JobLastRunService>();
 
 // register the data generation service
 builder.Services.AddScoped<IDataGenerationService, DataGenerationService>();

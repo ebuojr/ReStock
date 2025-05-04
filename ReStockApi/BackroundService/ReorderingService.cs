@@ -1,8 +1,19 @@
 ﻿
+using ReStockApi.Services.JobLastRunService;
+using ReStockApi.Services.Threshold;
+using System.Security.Cryptography;
+
 namespace ReStockApi.BackroundService
 {
     public class ReorderingService : BackgroundService
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public ReorderingService(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
@@ -14,8 +25,19 @@ namespace ReStockApi.BackroundService
                     Helper.WorkerServiceSetting.IsRunning = true;
                     Helper.WorkerServiceSetting.IsReadyToRun = false;
 
-                    // Simulate some work being done
-                    await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+                    using (var scope = _serviceProvider.CreateScope())
+                    {
+                        var _jobLastRunService = scope.ServiceProvider.GetRequiredService<IJobLastRunService>();
+                        var _thresholdService = scope.ServiceProvider.GetRequiredService<IThresholdService>();
+
+                        var lastrun = await _jobLastRunService.GetLastRunByType("ThresholdProductSync");
+                        if (lastrun.LastRunTime <= DateTime.Now.AddMinutes(-1))
+                        {
+                            await _thresholdService.SyncThresholds();
+                            await _jobLastRunService.UpdateJobLastRunAsync("ThresholdProductSync", startTime);
+                            Console.WriteLine($"ThresholdProductSync executed at: {startTime}");
+                        }
+                    }
 
                     Helper.WorkerServiceSetting.LastRun = startTime;
                     Helper.WorkerServiceSetting.IsRunning = false;

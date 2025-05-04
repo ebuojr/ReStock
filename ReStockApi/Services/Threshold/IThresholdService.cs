@@ -9,5 +9,7 @@ namespace ReStockApi.Services.Threshold
         Task<IEnumerable<InventoryThreshold>> GetThresholdsByStoreNoAsync(int storeNo);
         Task CreateThreshold(InventoryThreshold threshold);
         Task UpdateThresholdAsync(InventoryThreshold threshold);
+        Task DeleteThresholdAsync(int storeNo, string ItemNo);
+        Task SyncThresholds();
     }
 }

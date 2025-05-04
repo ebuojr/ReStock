@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ReStockApi.Services.Product;
+using System.Security.Cryptography;
 
 namespace ReStockApi.Controllers
 {

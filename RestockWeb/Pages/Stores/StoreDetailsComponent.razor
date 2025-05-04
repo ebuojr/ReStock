@@ -81,7 +81,7 @@
 
                         <div class="h-full bg-white border border-gray-300 shadow py-2 px-4">
                             <!-- Close Button -->
-                            <button x-on:click="quantityEditor = false" class="absolute flex items-center p-2 top-8 right-8 text-gray-500 hover:text-gray-700">
+                            <button x-on:click="quantityEditor = false" class="absolute flex items-center gap-2 p-2 top-6 right-8 text-gray-500 hover:text-gray-700 hover:underline">
                                 Cancel
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -125,7 +125,7 @@
            <div x-show="potentialOrdersComponent"
                 x-cloak
                 x-transition
-                x-on:click.away="potentialOrdersComponent = false" class="bg-white max-w-7xl p-4 border border-neutral-200 rounded-lg shadow-lg">
+                class="bg-white max-w-7xl p-4 border border-neutral-200 rounded-lg shadow-lg">
                <PotentialOrdersComponent Reorders="PotentialOrders" />
            </div>
         </div>

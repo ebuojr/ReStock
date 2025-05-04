@@ -9,5 +9,6 @@ namespace ReStockApi.Models
         public int StoreNo { get; set; }
         public string ItemNo { get; set; }
         public int Quantity { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

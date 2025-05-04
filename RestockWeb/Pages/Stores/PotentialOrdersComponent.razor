@@ -1,0 +1,113 @@
+﻿<div class="text-center">
+    <h2 class="mb-6 font-semibold  text-gray-800">Potential Orders</h2>
+</div>
+
+<div class="grid grid-cols-5 border border-neutral-200 mx-auto rounded-lg overflow-auto">
+    <!-- Header Row -->
+    <div class="relative px-4 py-3.5 flex flex-col items-center font-bold
+                after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+        Store No
+    </div>
+    <div class="relative px-4 py-3.5 flex flex-col items-center font-bold
+                after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+        Item No
+    </div>
+    <div class="relative px-4 py-3.5 flex flex-col items-center font-bold
+                after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+        Quantity
+    </div>
+    <div class="relative px-4 py-3.5 flex flex-col items-center font-bold
+                after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+        Created At
+    </div>
+    <div class="relative px-4 py-3.5 flex flex-col items-center font-bold
+                after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+        Actions
+    </div>
+
+    <!-- Data Rows -->
+    @if (Reorders != null && Reorders.Any())
+    {
+        @foreach (var reorder in Reorders)
+        {
+            <div class="relative px-4 py-3.5 flex flex-col items-center
+                        after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                        before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+                @reorder.StoreNo
+            </div>
+            <div class="relative px-4 py-3.5 flex flex-col items-center
+                        after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                        before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+                @reorder.ItemNo
+            </div>
+            <div class="relative px-4 py-3.5 flex flex-col items-center
+                        after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                        before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+                @reorder.Quantity
+            </div>
+            <div class="relative px-4 py-3.5 flex flex-col items-center
+                        after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                        before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+                @reorder.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+            </div>
+            <div class="relative px-4 py-3.5 flex flex-col items-center
+                        after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                        before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+                <button class="text-red-500 px-4 py-2 cursor-button" @onclick="() => DeleteReorder(reorder.ItemNo)">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                        <path fill-rule="evenodd" d="M16.5 4.478v.227a48.816 48.816 0 0 1 3.878.512.75.75 0 1 1-.256 1.478l-.209-.035-1.005 13.07a3 3 0 0 1-2.991 2.77H8.084a3 3 0 0 1-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 0 1-.256-1.478A48.567 48.567 0 0 1 7.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 0 1 3.369 0c1.603.051 2.815 1.387 2.815 2.951Zm-6.136-1.452a51.196 51.196 0 0 1 3.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 0 0-6 0v-.113c0-.794.609-1.428 1.364-1.452Zm-.355 5.945a.75.75 0 1 0-1.5.058l.347 9a.75.75 0 1 0 1.499-.058l-.346-9Zm5.48.058a.75.75 0 1 0-1.498-.058l-.347 9a.75.75 0 0 0 1.5.058l.345-9Z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="col-span-5 relative px-4 py-3.5 flex flex-col items-center justify-center
+                    after:content[''] after:absolute after:z-[1] after:bg-neutral-200 after:left-0 after:top-[-1px] after:w-full after:h-[1px]
+                    before:content[''] before:absolute before:z-[1] before:bg-neutral-200 before:top-0 before:left-[-1px] before:h-full before:w-[1px]">
+            No data available
+        </div>
+    }
+</div>
+<div class="mt-4 flex items-center gap-2">
+    <button x-on:click="potentialOrdersComponent = false" class="bg-gray-200 font-medium text-gray-600 px-4 py-2 rounded-md mt-4 hover:opacity-60 duration-75 @(Reorders.Any() ? "" : "hidden")">Cancel</button>
+    <button x-on:click="potentialOrdersComponent = false" class="w-full bg-blue-500 font-medium text-white px-4 py-2 rounded-md mt-4 hover:opacity-60 duration-75 @(Reorders.Any() ? "" : "hidden")" @onclick="() => ConfirmReorders()">
+        Confirm
+    </button>
+</div>
+
+
+@code {
+    [Parameter]
+    public List<Models.Reorder> Reorders { get; set; } = new();
+
+    [Inject]
+    public IToastService _ToastService { get; set; }
+
+    private void DeleteReorder(string itemNo)
+    {
+        try
+        {
+            var reorderToDelete = Reorders.FirstOrDefault(r => r.ItemNo == itemNo);
+            if (reorderToDelete != null)
+                Reorders.Remove(reorderToDelete);
+
+            _ToastService.ShowSuccess("Item deleted successfully");
+        }
+        catch (Exception ex)
+        {
+            _ToastService.ShowError($"Error deleting item: {ex.Message}");
+        }
+    }
+
+    void ConfirmReorders()
+    {
+        _ToastService.ShowSuccess("Reorders confirmed successfully");
+    }
+}

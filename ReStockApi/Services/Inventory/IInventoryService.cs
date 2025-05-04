@@ -1,13 +1,16 @@
-﻿using ReStockApi.Models;
+﻿using ReStockApi.DTOs;
+using ReStockApi.Models;
 
 namespace ReStockApi.Services.Inventory
 {
     public interface IInventoryService
     {
+        Task<List<StoresInventoryWithThresholdDTO>> GetStoreInventoryByStoreNoWithThresholdsAsync(int storeNo);
         Task<List<StoreInventory>> GetStoreInventoryByStoreNoAsync(int storeNo);
         Task<StoreInventory> GetStoreInventoryAsync(int storeNo, string ItemNo);
-        Task UpdateStoreInventoryAsync(StoreInventory inventory);
+        Task UpsertStoreInventoryAsync(StoreInventory inventory);
+        Task<List<DistributionCenterInventory>> GetDistributionCenterInventoryAsync();
         Task<DistributionCenterInventory> GetDistributionCenterInventoryAsync(string ItemNo);
-        Task UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory);
+        Task UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory);
     }
 }

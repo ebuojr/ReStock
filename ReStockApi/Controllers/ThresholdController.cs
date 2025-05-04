@@ -13,14 +13,21 @@ namespace ReStockApi.Controllers
             _thresholdService = thresholdService;
         }
 
-        [HttpGet]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetThresholds()
+        {
+            var threadholds = await _thresholdService.GetThresholdsAsync();
+            return Ok(threadholds ?? null);
+        }
+
+        [HttpGet("store-item")]
         public async Task<IActionResult> GetThreshold(int storeNo, string ItemNo)
         {
             var threshold = await _thresholdService.GetThresholdAsync(storeNo, ItemNo);
             return Ok(threshold ?? null);
         }
 
-        [HttpGet("storeno")]
+        [HttpGet("store")]
         public async Task<IActionResult> GetThresholdsByStoreNo(int storeNo)
         {
             var thresholds = await _thresholdService.GetThresholdsByStoreNoAsync(storeNo);
@@ -34,7 +41,7 @@ namespace ReStockApi.Controllers
             return Ok();
         }
 
-        [HttpPut]
+        [HttpPut("update")]
         public async Task<ActionResult> UpdateThreshold([FromBody] Models.InventoryThreshold threshold)
         {
             await _thresholdService.UpdateThresholdAsync(threshold);

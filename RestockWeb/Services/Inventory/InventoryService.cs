@@ -1,3 +1,4 @@
+using RestockWeb.DTOs;
 using RestockWeb.Models;
 
 namespace RestockWeb.Services.Inventory
@@ -10,29 +11,39 @@ namespace RestockWeb.Services.Inventory
         {
         }
 
-        public async Task<DistributionCenterInventory?> GetDistributionCenterInventoryAsync(string itemNo)
+        public Task<List<DistributionCenterInventory>> GetDistributionCenterInventories()
         {
-            return await GetAsync<DistributionCenterInventory>($"{BaseUrl}/dc/{itemNo}");
+            return GetAsync<List<DistributionCenterInventory>>($"{BaseUrl}/distribution-center-inventory");
+        }
+
+        public async Task<DistributionCenterInventory?> GetDistributionCenterInventoryByItemNo(string itemNo)
+        {
+            return await GetAsync<DistributionCenterInventory>($"{BaseUrl}/distribution-center-inventory-by-item/{itemNo}");
         }
 
         public async Task<StoreInventory?> GetStoreInventoryAsync(int storeNo, string itemNo)
         {
-            return await GetAsync<StoreInventory>($"{BaseUrl}/store/{storeNo}/{itemNo}");
+            return await GetAsync<StoreInventory>($"{BaseUrl}/store-item?storeNo={storeNo}&ItemNo={itemNo}");
         }
 
         public async Task<List<StoreInventory>?> GetStoreInventoryByStoreNoAsync(int storeNo)
         {
-            return await GetAsync<List<StoreInventory>>($"{BaseUrl}/store/{storeNo}");
+            return await GetAsync<List<StoreInventory>>($"{BaseUrl}/store?storeNo={storeNo}");
         }
 
-        public async Task<bool> UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
+        public async Task<List<StoresInventoryWithThresholdDTO>> GetStoreInventoryByStoreNoWithThresholdsAsync(int storeNo)
         {
-            return await PutAsync($"{BaseUrl}/dc/update", inventory);
+            return await GetAsync<List<StoresInventoryWithThresholdDTO>>($"{BaseUrl}/store-inventory-with-Threshold-store-no?storeNo={storeNo}");
         }
 
-        public async Task<bool> UpdateStoreInventoryAsync(StoreInventory inventory)
+        public async Task<bool> UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {
-            return await PutAsync($"{BaseUrl}/store/update", inventory);
+            return await PutAsync($"{BaseUrl}/distribution-center-inventory", inventory);
+        }
+
+        public async Task UpsertStoreInventoryAsync(StoreInventory inventory)
+        {
+            await PutAsync($"{BaseUrl}/update-store-inventory", inventory);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace ReStockApi.Services.Product
                 throw new ValidationException(result.Errors);
 
             await _db.Products.AddAsync(product);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
         }
 
         public async Task DeleteProductAsync(int id)
@@ -33,7 +33,7 @@ namespace ReStockApi.Services.Product
                 throw new Exception("Product not found");
 
             _db.Products.Remove(temp);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
         }
 
         public async Task<Models.Product> GetProductByNoAsync(string ItemNo)
@@ -50,7 +50,7 @@ namespace ReStockApi.Services.Product
                 throw new ValidationException(result.Errors);
 
             _db.Products.Update(product);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges();
         }
     }
 }

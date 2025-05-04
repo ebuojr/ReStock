@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReStockApi.DTOs;
 using ReStockApi.Models;
+using System.Security.Cryptography;
 
 namespace ReStockApi.Services.Inventory
 {
@@ -15,22 +17,92 @@ namespace ReStockApi.Services.Inventory
         public async Task<DistributionCenterInventory> GetDistributionCenterInventoryAsync(string ItemNo)
             => await _db.DistributionCenterInventories.FirstOrDefaultAsync(x => x.ItemNo == ItemNo);
 
+        public async Task<List<DistributionCenterInventory>> GetDistributionCenterInventoryAsync()
+            => await _db.DistributionCenterInventories.ToListAsync();
+
         public async Task<StoreInventory> GetStoreInventoryAsync(int storeNo, string ItemNo)
             => await _db.StoreInventories.FirstOrDefaultAsync(x => x.StoreNo == storeNo && x.ItemNo == ItemNo);
 
         public Task<List<StoreInventory>> GetStoreInventoryByStoreNoAsync(int storeNo)
             => _db.StoreInventories.Where(x => x.StoreNo == storeNo).ToListAsync();
 
-        public async Task UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
+        public async Task<List<StoresInventoryWithThresholdDTO>> GetStoreInventoryByStoreNoWithThresholdsAsync(int storeNo)
         {
-            _db.DistributionCenterInventories.Update(inventory);
+            var currentQty = await _db.StoreInventories
+                .Where(x => x.StoreNo == storeNo)
+                .Select(x => new StoresInventoryWithThresholdDTO
+                {
+                    StoreNo = x.StoreNo,
+                    ItemNo = x.ItemNo,
+                    CurrentQuantity = x.Quantity
+                })
+                .ToListAsync();
+
+            var thresholds = await _db.InventoryThresholds
+                .Where(x => x.StoreNo == storeNo)
+                .Select(x => new StoresInventoryWithThresholdDTO
+                {
+                    StoreNo = x.StoreNo,
+                    ItemNo = x.ItemNo,
+                    MinimumQuantity = x.MinimumQuantity,
+                    TargetQuantity = x.TargetQuantity,
+                    ReorderQuantity = x.ReorderQuantity
+                })
+                .ToListAsync();
+
+            return currentQty.Join(
+                thresholds,
+                current => new { current.StoreNo, current.ItemNo },
+                threshold => new { threshold.StoreNo, threshold.ItemNo },
+                (current, threshold) => new StoresInventoryWithThresholdDTO
+                {
+                    StoreNo = current.StoreNo,
+                    ItemNo = current.ItemNo,
+                    CurrentQuantity = current.CurrentQuantity,
+                    MinimumQuantity = threshold.MinimumQuantity,
+                    TargetQuantity = threshold.TargetQuantity,
+                    ReorderQuantity = threshold.ReorderQuantity
+                })
+                .ToList();
+        }
+
+        public async Task UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
+        {
+            var temp = await GetDistributionCenterInventoryAsync(inventory.ItemNo);
+
+            if (temp == null)
+            {
+                inventory.LastUpdated = DateTime.UtcNow;
+                await _db.DistributionCenterInventories.AddAsync(inventory);
+            }
+            else
+            {
+                // Update existing inventory record
+                temp.Quantity = inventory.Quantity;
+                temp.LastUpdated = DateTime.UtcNow;
+                _db.DistributionCenterInventories.Update(temp);
+            }
+
             await _db.SaveChangesAsync();
         }
 
-        public Task UpdateStoreInventoryAsync(StoreInventory inventory)
+        public async Task UpsertStoreInventoryAsync(StoreInventory inventory)
         {
-            _db.StoreInventories.Update(inventory);
-            return _db.SaveChangesAsync();
+            var temp = await GetStoreInventoryAsync(inventory.StoreNo, inventory.ItemNo);
+
+            if (temp == null)
+            {
+                inventory.LastUpdated = DateTime.UtcNow;
+                await _db.StoreInventories.AddAsync(inventory);
+            }
+            else
+            {
+                temp.Quantity = inventory.Quantity;
+                temp.LastUpdated = DateTime.UtcNow;
+                _db.StoreInventories.Update(temp);
+            }
+
+            await _db.SaveChangesAsync();
         }
     }
 }

@@ -15,6 +15,7 @@ namespace ReStockApi.Models
         public DbSet<SalesOrderLine> SalesOrderLines { get; set; }
         public DbSet<Reorder> Reorders { get; set; }
         public DbSet<ReOrderLog> ReOrderLogs  { get; set; }
+        public DbSet<JobLastRun> JobLastRuns { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,6 +28,7 @@ namespace ReStockApi.Models
             modelBuilder.Entity<SalesOrderLine>().HasKey(sol => sol.Id);
             modelBuilder.Entity<Reorder>().HasKey(r => r.Id);
             modelBuilder.Entity<ReOrderLog>().HasKey(rol => rol.Id);
+            modelBuilder.Entity<JobLastRun>().HasKey(jlr => jlr.Id);
         }
     }
 }

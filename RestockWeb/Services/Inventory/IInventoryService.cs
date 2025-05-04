@@ -1,13 +1,16 @@
+using RestockWeb.DTOs;
 using RestockWeb.Models;
 
 namespace RestockWeb.Services.Inventory
 {
     public interface IInventoryService
     {
+        Task<List<StoresInventoryWithThresholdDTO>> GetStoreInventoryByStoreNoWithThresholdsAsync(int storeNo);
         Task<List<StoreInventory>?> GetStoreInventoryByStoreNoAsync(int storeNo);
         Task<StoreInventory?> GetStoreInventoryAsync(int storeNo, string itemNo);
-        Task<bool> UpdateStoreInventoryAsync(StoreInventory inventory);
-        Task<DistributionCenterInventory?> GetDistributionCenterInventoryAsync(string itemNo);
-        Task<bool> UpdateDistributionCenterInventoryAsync(DistributionCenterInventory inventory);
+        Task UpsertStoreInventoryAsync(StoreInventory inventory);
+        Task<List<DistributionCenterInventory>> GetDistributionCenterInventories();
+        Task<DistributionCenterInventory?> GetDistributionCenterInventoryByItemNo(string itemNo);
+        Task<bool> UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory);
     }
 }

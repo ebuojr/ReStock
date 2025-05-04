@@ -86,3 +86,8 @@ code {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.blazored-toast {
+    width: 24rem !important;
+    border-radius: .25rem;
+}

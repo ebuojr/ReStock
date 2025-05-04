@@ -17,8 +17,7 @@ namespace ReStockApiTest
         {
             // Create a new in-memory database for each test
             var options = new DbContextOptionsBuilder<ReStockDbContext>()
-                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-                .Options;
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString()).Options;
 
             _context = new ReStockDbContext(options);
             _validator = new ProductdValidator();
@@ -31,20 +30,10 @@ namespace ReStockApiTest
             _context.Dispose();
         }
 
-        [Fact]
-        public async Task CreateProductAsync_ValidProduct_Success()
+        [Theory]
+        [MemberData(nameof(ValidProducts))]
+        public async Task CreateProductAsync_ValidInputProduct_Success(Product product)
         {
-            // Arrange
-            var product = new Product
-            {
-                Id = 1,
-                ItemNo = "ITEM001",
-                Name = "Test Product",
-                Brand = "Zizzi",
-                RetailPrice = 99.99m,
-                IsActive = true
-            };
-
             // Act
             await _productService.CreateProductAsync(product);
 
@@ -55,6 +44,7 @@ namespace ReStockApiTest
             savedProduct.Name.Should().Be(product.Name);
             savedProduct.Brand.Should().Be(product.Brand);
             savedProduct.RetailPrice.Should().Be(product.RetailPrice);
+            savedProduct.IsActive.Should().Be(product.IsActive);
         }
 
         [Theory]
@@ -267,5 +257,46 @@ namespace ReStockApiTest
                 .WithMessage("*Brand is required*")
                 .WithMessage("*RetailPrice must be greater than 0*");
         }
+
+        public static IEnumerable<object[]> ValidProducts =>
+            new List<object[]>
+            {
+                new object[]
+                {
+                    new Product
+                    {
+                        Id = 1,
+                        ItemNo = "ITEM001",
+                        Name = "Test Product 1",
+                        Brand = "Zizzi",
+                        RetailPrice = 99.99m,
+                        IsActive = true
+                    }
+                },
+                new object[]
+                {
+                    new Product
+                    {
+                        Id = 2,
+                        ItemNo = "ITEM002",
+                        Name = "Test Product 2",
+                        Brand = "Zizzi",
+                        RetailPrice = 149.99m,
+                        IsActive = true
+                    }
+                },
+                new object[]
+                {
+                    new Product
+                    {
+                        Id = 3,
+                        ItemNo = "ITEM003",
+                        Name = "Test Product 3",
+                        Brand = "Zizzi",
+                        RetailPrice = 199.99m,
+                        IsActive = false
+                    }
+                }
+            };
     }
 }

@@ -3,8 +3,8 @@
 <PageTitle>Distribution-Center</PageTitle>
 
 <div class="w-full p-6">
-    <div class="w-full p-2 flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-semibold">Distribution Center Inventory</h1>
+    <div class="w-full flex justify-between items-center mb-4">
+        <PageTitleComponent Title="Distribution Center Inventory" Description="This page provides an overview of all reorder logs." />
         <div class="flex gap-2">
             <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search by ItemNo..."
             class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />

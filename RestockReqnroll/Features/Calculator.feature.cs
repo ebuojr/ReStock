@@ -19,21 +19,22 @@ namespace RestockReqnroll.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("Reqnroll", "2.0.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class CalculatorFeature : object, Xunit.IClassFixture<CalculatorFeature.FixtureData>, Xunit.IAsyncLifetime
+    public partial class CreatePotentialOrdersFeature : object, Xunit.IClassFixture<CreatePotentialOrdersFeature.FixtureData>, Xunit.IAsyncLifetime
     {
         
         private global::Reqnroll.ITestRunner testRunner;
         
         private static string[] featureTags = ((string[])(null));
         
-        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Calculator", "Simple calculator for adding two numbers", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
+        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Create Potential Orders", "  As a store manager\r\n  I want to create potential orders for items below minimum" +
+                " quantity\r\n  So that I can maintain optimal inventory levels", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
         
         private Xunit.Abstractions.ITestOutputHelper _testOutputHelper;
         
 #line 1 "Calculator.feature"
 #line hidden
         
-        public CalculatorFeature(CalculatorFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public CreatePotentialOrdersFeature(CreatePotentialOrdersFeature.FixtureData fixtureData, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
         }
@@ -92,28 +93,16 @@ namespace RestockReqnroll.Features
             await this.TestTearDownAsync();
         }
         
-        [Xunit.SkippableTheoryAttribute(DisplayName="Add two numbers")]
-        [Xunit.TraitAttribute("FeatureTitle", "Calculator")]
-        [Xunit.TraitAttribute("Description", "Add two numbers")]
-        [Xunit.TraitAttribute("Category", "mytag")]
-        [Xunit.InlineDataAttribute("50", "70", "120", new string[0])]
-        [Xunit.InlineDataAttribute("20", "30", "50", new string[0])]
-        public async System.Threading.Tasks.Task AddTwoNumbers(string firstNumber, string secondNumber, string result, string[] exampleTags)
+        [Xunit.SkippableFactAttribute(DisplayName="Create potential orders through API")]
+        [Xunit.TraitAttribute("FeatureTitle", "Create Potential Orders")]
+        [Xunit.TraitAttribute("Description", "Create potential orders through API")]
+        public async System.Threading.Tasks.Task CreatePotentialOrdersThroughAPI()
         {
-            string[] @__tags = new string[] {
-                    "mytag"};
-            if ((exampleTags != null))
-            {
-                @__tags = System.Linq.Enumerable.ToArray(System.Linq.Enumerable.Concat(@__tags, exampleTags));
-            }
-            string[] tagsOfScenario = @__tags;
+            string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            argumentsOfScenario.Add("FirstNumber", firstNumber);
-            argumentsOfScenario.Add("SecondNumber", secondNumber);
-            argumentsOfScenario.Add("Result", result);
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Add two numbers", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Create potential orders through API", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 6
-this.ScenarioInitialize(scenarioInfo);
+  this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
             {
@@ -123,16 +112,45 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 await this.ScenarioStartAsync();
 #line 7
-    await testRunner.GivenAsync(string.Format("the first number is {0}", firstNumber), ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+    await testRunner.GivenAsync("a store exists with store number 1", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
+                global::Reqnroll.Table table1 = new global::Reqnroll.Table(new string[] {
+                            "ItemNo",
+                            "CurrentQuantity",
+                            "MinimumQuantity",
+                            "TargetQuantity",
+                            "ReorderQuantity"});
+                table1.AddRow(new string[] {
+                            "ITEM001",
+                            "5",
+                            "10",
+                            "20",
+                            "10"});
 #line 8
-    await testRunner.AndAsync(string.Format("the second number is {0}", secondNumber), ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+    await testRunner.AndAsync("the store inventory is:", ((string)(null)), table1, "And ");
 #line hidden
-#line 9
-    await testRunner.WhenAsync("the two numbers are added", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+                global::Reqnroll.Table table2 = new global::Reqnroll.Table(new string[] {
+                            "ItemNo",
+                            "Quantity"});
+                table2.AddRow(new string[] {
+                            "ITEM001",
+                            "50"});
+#line 11
+    await testRunner.AndAsync("the distribution center inventory is:", ((string)(null)), table2, "And ");
 #line hidden
-#line 10
-    await testRunner.ThenAsync(string.Format("the result should be {0}", result), ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 14
+    await testRunner.WhenAsync("I request potential orders for store 1", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+                global::Reqnroll.Table table3 = new global::Reqnroll.Table(new string[] {
+                            "StoreNo",
+                            "ItemNo",
+                            "Quantity"});
+                table3.AddRow(new string[] {
+                            "1",
+                            "ITEM001",
+                            "15"});
+#line 15
+    await testRunner.ThenAsync("the API should return:", ((string)(null)), table3, "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -145,12 +163,12 @@ this.ScenarioInitialize(scenarioInfo);
             
             async System.Threading.Tasks.Task Xunit.IAsyncLifetime.InitializeAsync()
             {
-                await CalculatorFeature.FeatureSetupAsync();
+                await CreatePotentialOrdersFeature.FeatureSetupAsync();
             }
             
             async System.Threading.Tasks.Task Xunit.IAsyncLifetime.DisposeAsync()
             {
-                await CalculatorFeature.FeatureTearDownAsync();
+                await CreatePotentialOrdersFeature.FeatureTearDownAsync();
             }
         }
     }

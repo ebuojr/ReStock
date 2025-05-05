@@ -1,15 +1,17 @@
-Feature: Calculator
+Feature: Create Potential Orders
+  As a store manager
+  I want to create potential orders for items below minimum quantity
+  So that I can maintain optimal inventory levels
 
-Simple calculator for adding two numbers
-
-@mytag
-Scenario Outline: Add two numbers
-    Given the first number is <FirstNumber>
-    And the second number is <SecondNumber>
-    When the two numbers are added
-    Then the result should be <Result>
-
-    Examples:
-      | FirstNumber | SecondNumber | Result |
-      | 50          | 70           | 120    |
-      | 20          | 30           | 50     |
+  Scenario: Create potential orders through API
+    Given a store exists with store number 1
+    And the store inventory is:
+      | ItemNo  | CurrentQuantity | MinimumQuantity | TargetQuantity | ReorderQuantity |
+      | ITEM001 | 5              | 10              | 20             | 10              |
+    And the distribution center inventory is:
+      | ItemNo  | Quantity |
+      | ITEM001 | 50       |
+    When I request potential orders for store 1
+    Then the API should return:
+      | StoreNo | ItemNo  | Quantity |
+      | 1       | ITEM001 | 15       |

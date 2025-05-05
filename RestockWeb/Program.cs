@@ -8,6 +8,7 @@ using RestockWeb.Services.Reorder;
 using RestockWeb.Services.SalesOrder;
 using RestockWeb.Services.Threshold;
 using Blazored.Toast;
+using RestockWeb.Services.Reorderlogs;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -28,5 +29,6 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IReorderService, ReorderService>();
 builder.Services.AddScoped<ISalesOrderService, SalesOrderService>();
 builder.Services.AddScoped<IThresholdService, ThresholdService>();
+builder.Services.AddScoped<IReorderLogService, ReorderLogService>();
 
 await builder.Build().RunAsync();

@@ -1,11 +1,90 @@
 ﻿@page "/reorderlogs"
 
-<PageTitle>Reorder logs overview</PageTitle>
+<PageTitle>Reorder Logs Overview</PageTitle>
 
 <div class="relative w-full p-6">
-    <PageTitleComponent Title="Reorder logs overview" Description="This page provides an overview of all reorder logs." />
+    <PageTitleComponent Title="Reorder Logs Overview" Description="This page provides an overview of all reorder logs." />
+
+    <!-- Filter Section -->
+    <div class="flex flex-wrap gap-4 mb-6 mt-4">
+        <input type="text" @bind="FilterStoreNo" @bind:event="oninput" placeholder="Filter by Store No..."
+               class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+        <input type="text" @bind="FilterItemNo" @bind:event="oninput" placeholder="Filter by Item No..."
+               class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+        <input type="date" @bind="FilterCreatedAt" @bind:event="oninput"
+               class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+        <button @onclick="ApplyFilters"
+                class="bg-blue-500 text-sm text-white px-6 py-2 rounded hover:bg-blue-600">
+            Apply Filters
+        </button>
+    </div>
+
+    <!-- Reorder Logs Table -->
+    <div class="grid grid-cols-1 divide-y divide-gray-300 border border-gray-300 rounded">
+        <!-- Table Header -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 2fr;" class="font-semibold bg-gray-100 p-4">
+            <div>Store No</div>
+            <div>Item No</div>
+            <div>Quantity</div>
+            <div>Created At</div>
+            <div>Description</div>
+        </div>
+
+        <!-- Table Rows -->
+        @if (FilteredReOrderLogs == null || !FilteredReOrderLogs.Any())
+        {
+            <div class="col-span-5 text-center text-gray-600 p-4">
+                No reorder logs found.
+            </div>
+        }
+        else
+        {
+            @foreach (var log in FilteredReOrderLogs)
+            {
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 2fr;" class="items-center p-4 hover:bg-gray-50">
+                    <div>@log.StoreNo</div>
+                    <div>@log.ItemNo</div>
+                    <div>@log.Quantity</div>
+                    <div>@log.LogTime.ToString("yyyy-MM-dd hh:mm")</div>
+                    <div>@log.Description</div>
+                </div>
+            }
+        }
+    </div>
+
+
 </div>
 
 @code {
+    [Inject]
+    private IReorderLogService ReorderLogService { get; set; } = default!;
 
+    public IEnumerable<ReOrderLog> ReOrderLogs { get; set; } = new List<ReOrderLog>();
+    public IEnumerable<ReOrderLog> FilteredReOrderLogs { get; set; } = new List<ReOrderLog>();
+
+    private string FilterStoreNo { get; set; } = string.Empty;
+    private string FilterItemNo { get; set; } = string.Empty;
+    private DateTime? FilterCreatedAt { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ReOrderLogs = await ReorderLogService.GetLogsAsync(DateTime.MinValue, string.Empty, string.Empty, string.Empty);
+        FilteredReOrderLogs = ReOrderLogs;
+    }
+
+    private void ApplyFilters()
+    {
+        FilteredReOrderLogs = ReOrderLogs
+            .Where(log =>
+                (string.IsNullOrWhiteSpace(FilterStoreNo) || log.StoreNo.ToString().Contains(FilterStoreNo, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(FilterItemNo) || log.ItemNo.Contains(FilterItemNo, StringComparison.OrdinalIgnoreCase)) &&
+                (!FilterCreatedAt.HasValue || log.LogTime.Date == FilterCreatedAt.Value.Date))
+            .ToList();
+    }
+
+    private void ViewDetails(ReOrderLog log)
+    {
+        // Implement logic to view details of the selected log
+        Console.WriteLine($"Viewing details for Log ID: {log.Id}");
+    }
 }

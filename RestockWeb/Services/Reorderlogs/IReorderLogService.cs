@@ -1,6 +1,6 @@
-﻿using ReStockApi.Models;
+﻿using RestockWeb.Models;
 
-namespace ReStockApi.Services.ReorderLog
+namespace RestockWeb.Services.Reorderlogs
 {
     public interface IReorderLogService
     {

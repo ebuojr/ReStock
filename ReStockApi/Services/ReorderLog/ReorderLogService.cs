@@ -6,17 +6,28 @@ namespace ReStockApi.Services.ReorderLog
     public class ReorderLogService : IReorderLogService
     {
         private readonly ReStockDbContext _db;
-
-        public ReorderLogService(ReStockDbContext db)
+        private readonly ILogger<ReorderLogService> _logger;
+        public ReorderLogService(ReStockDbContext db, ILogger<ReorderLogService> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<ReOrderLog>> GetLogsByItemNoItemNoAsync(int storeNo, string ItemNo)
-            => await _db.ReOrderLogs.Where(l => l.StoreNo == storeNo && l.ItemNo == ItemNo).ToListAsync();
+        public async Task<IEnumerable<ReOrderLog>> GetLogsAsync(DateTime fromdate, string type, string no, string storeNo)
+        {
+            IQueryable<ReOrderLog> query = _db.ReOrderLogs;
 
-        public async Task<IEnumerable<ReOrderLog>> GetLogsByStoreNoAsync(int storeNo)
-            => await _db.ReOrderLogs.Where(x => x.StoreNo == storeNo).ToListAsync();
+            if (fromdate != DateTime.MinValue)
+                query = query.Where(x => x.LogTime >= fromdate);
+            if (!string.IsNullOrEmpty(type))
+                query = query.Where(x => x.EventType == type);
+            if (!string.IsNullOrEmpty(no))
+                query = query.Where(x => x.ItemNo == no);
+            if (!string.IsNullOrEmpty(storeNo))
+                query = query.Where(x => x.StoreNo.ToString() == storeNo);
+
+            return await query.OrderByDescending(x => x.LogTime).Take(500).ToListAsync();
+        }
 
         public async Task LogAsync(int storeNo, string ItemNo, int quantity, string eventType, string description, bool ordered)
         {

@@ -67,7 +67,7 @@ namespace ReStockApiTest
             // Act & Assert
             var action = () => _productService.CreateProductAsync(product);
             await action.Should().ThrowAsync<ValidationException>()
-                .WithMessage("*RetailPrice must be greater than 0*");
+                .WithMessage("*RetailPrice must be between 69 and 1200*");
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace ReStockApiTest
             exception.WithMessage("*Name is required*")
                 .WithMessage("*ItemNo is required*")
                 .WithMessage("*Brand is required*")
-                .WithMessage("*RetailPrice must be greater than 0*");
+                .WithMessage("*RetailPrice must be between 69 and 1200*");
         }
 
         [Fact]
@@ -255,7 +255,7 @@ namespace ReStockApiTest
             exception.WithMessage("*Name is required*")
                 .WithMessage("*ItemNo is required*")
                 .WithMessage("*Brand is required*")
-                .WithMessage("*RetailPrice must be greater than 0*");
+                .WithMessage("*RetailPrice must be between 69 and 1200*");
         }
 
         public static IEnumerable<object[]> ValidProducts =>

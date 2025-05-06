@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using ReStockApi.Models;
-using System.Security.Cryptography;
 
 namespace ReStockApi.Validation
 {
@@ -22,9 +21,8 @@ namespace ReStockApi.Validation
                 .WithMessage("Brand is required");
             RuleFor(x => x.RetailPrice)
                 .NotNull()
-                .NotEmpty()
-                .GreaterThan(0)
-                .WithMessage("RetailPrice must be greater than 0");
+                .InclusiveBetween(69, 1200)
+                .WithMessage("RetailPrice must be between 69 and 1200");
         }
     }
 }

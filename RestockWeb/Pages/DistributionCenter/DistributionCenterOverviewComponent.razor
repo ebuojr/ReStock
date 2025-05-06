@@ -93,8 +93,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        InventoryList = await InventoryService.GetDistributionCenterInventories();
-        FilteredInventoryList = InventoryList;
+        try
+        {
+            InventoryList = await InventoryService.GetDistributionCenterInventories();
+            FilteredInventoryList = InventoryList;
+        }
+        catch (Exception ex)
+        {
+            _ToastService.ShowError($"Error while fetching inventories: {ex.Message}");
+        }
+
     }
 
     private void FilterInventory()

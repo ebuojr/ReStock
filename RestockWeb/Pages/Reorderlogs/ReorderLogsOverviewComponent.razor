@@ -59,6 +59,9 @@
     [Inject]
     private IReorderLogService ReorderLogService { get; set; } = default!;
 
+    [Inject]
+    public IToastService _ToastService { get; set; } = default!;
+
     public IEnumerable<ReOrderLog> ReOrderLogs { get; set; } = new List<ReOrderLog>();
     public IEnumerable<ReOrderLog> FilteredReOrderLogs { get; set; } = new List<ReOrderLog>();
 
@@ -68,8 +71,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ReOrderLogs = await ReorderLogService.GetLogsAsync(DateTime.MinValue, string.Empty, string.Empty, string.Empty);
-        FilteredReOrderLogs = ReOrderLogs;
+        try
+        {
+            ReOrderLogs = await ReorderLogService.GetLogsAsync(DateTime.MinValue, string.Empty, string.Empty, string.Empty);
+            FilteredReOrderLogs = ReOrderLogs;
+        }
+        catch (Exception ex)
+        {
+            _ToastService.ShowError("Error loading reorder logs. " + ex.Message);
+        }
     }
 
     private void ApplyFilters()

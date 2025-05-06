@@ -21,41 +21,50 @@
 
     <!-- Responsive store grid -->
     <div class="w-full grid grid-cols-1 gap-2">
-        @foreach (var store in FilteredStores)
-        {
-            <div class="bg-white rounded border border-gray-300 flex flex-col relative px-2 py-4 hover:bg-gray-50 duration-75" style="overflow: visible;">
-                <!-- Store Details -->
-                <div class="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
-                    <a href="/stores/@store.No" class="flex items-center gap-1 text-sm font-semibold text-gray-900 truncate hover:underline hover:text-blue-600 duration-75">
-                       @store.Name
-                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-                           <path fill-rule="evenodd" d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
-                       </svg>
-                    </a>
-                    <p class="text-sm text-gray-600">Store Number: <span class="font-medium">@store.No</span></p>
-                    <p class="text-sm text-gray-600">Country: <span class="font-medium">@store.Country</span></p>
-                    <p class="text-sm text-gray-600">Address: <span class="font-medium">@store.Address</span></p>
-                </div>
-                <!-- Action Menu -->
-                <div class="absolute p-4 z-[10] end-0" x-data="{ open: false }">
-                    <button x-on:click="open = !open" class="text-gray-500 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v.01M12 12v.01M12 18v.01" />
-                        </svg>
-                    </button>
-                    <div x-show="open" x-on:click.away="open = false" x-transition class="absolute right-10 bottom-6 w-48 bg-white shadow border border-gray-300 rounded" style="overflow: visible;">
-                        <ul>
-                            <li>
-                                <button x-on:click="open = false; editopen = true" @onclick="() => { SelectedStore = store; }" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded hover:underline">Update store</button>
-                            </li>
-                            <li>
-                                <button @onclick="() => DeleteStore(store)" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded hover:underline">Delete store</button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        }
+       @if (FilteredStores == null || !FilteredStores.Any())
+       {
+           <div class="text-center text-gray-500 py-4">
+               <p>No stores found. Please adjust your search or add new stores.</p>
+           </div>
+       }
+       else
+       {
+           @foreach (var store in FilteredStores)
+           {
+               <div class="bg-white rounded border border-gray-300 flex flex-col relative px-2 py-4 hover:bg-gray-50 duration-75" style="overflow: visible;">
+                   <!-- Store Details -->
+                   <div class="p-4 grid grid-cols-1 lg:grid-cols-4 gap-4">
+                       <a href="/stores/@store.No" class="flex items-center gap-1 text-sm font-semibold text-gray-900 truncate hover:underline hover:text-blue-600 duration-75">
+                           @store.Name
+                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                               <path fill-rule="evenodd" d="M4.22 11.78a.75.75 0 0 1 0-1.06L9.44 5.5H5.75a.75.75 0 0 1 0-1.5h5.5a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0V6.56l-5.22 5.22a.75.75 0 0 1-1.06 0Z" clip-rule="evenodd" />
+                           </svg>
+                       </a>
+                       <p class="text-sm text-gray-600">Store Number: <span class="font-medium">@store.No</span></p>
+                       <p class="text-sm text-gray-600">Country: <span class="font-medium">@store.Country</span></p>
+                       <p class="text-sm text-gray-600">Address: <span class="font-medium">@store.Address</span></p>
+                   </div>
+                   <!-- Action Menu -->
+                   <div class="absolute p-4 z-[10] end-0" x-data="{ open: false }">
+                       <button x-on:click="open = !open" class="text-gray-500 hover:text-gray-700">
+                           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v.01M12 12v.01M12 18v.01" />
+                           </svg>
+                       </button>
+                       <div x-show="open" x-on:click.away="open = false" x-transition class="absolute right-10 bottom-6 w-48 bg-white shadow border border-gray-300 rounded" style="overflow: visible;">
+                           <ul>
+                               <li>
+                                   <button x-on:click="open = false; editopen = true" @onclick="() => { SelectedStore = store; }" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded hover:underline">Update store</button>
+                               </li>
+                               <li>
+                                   <button @onclick="() => DeleteStore(store)" class="block px-4 py-2 text-xs text-gray-500 hover:bg-gray-100 w-full text-left rounded hover:underline">Delete store</button>
+                               </li>
+                           </ul>
+                       </div>
+                   </div>
+               </div>
+           }
+       }
     </div>
 
     <!-- Edit Modal -->
@@ -152,8 +161,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Stores = await _StoreService.GetAllStoresAsync();
-        FilteredStores = Stores;
+        try
+        {
+            Stores = await _StoreService.GetAllStoresAsync();
+            FilteredStores = Stores;
+        }
+        catch (Exception)
+        {
+            _ToastService.ShowError("Failed to load stores.");
+        }
     }
 
     private void FilterStores()

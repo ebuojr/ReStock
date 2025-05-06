@@ -11,7 +11,7 @@ namespace ReStockApiTest
     {
         private readonly ReStockDbContext _context;
         private readonly IValidator<Product> _validator;
-        private readonly ProductService _productService;
+        private readonly IProductService _productService;
 
         public ProductServiceTest()
         {

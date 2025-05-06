@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ReStockApi.Models;
 using ReStockApi.Services.Store;
+using ReStockApi.Validation;
 
 namespace ReStockApiTest
 {
@@ -50,6 +51,35 @@ namespace ReStockApiTest
             Assert.Equal(store.Country, savedStore.Country);
             Assert.Equal(store.Address, savedStore.Address);
         }
+
+
+        [Theory]
+        [InlineData(5010, true)]  // Valid: Starts with "50" and within range
+        [InlineData(5034, true)] // Valid: Starts with "50" and within range
+        [InlineData(6000, false)] // Invalid: Greater than 5999
+        [InlineData(4999, false)] // Invalid: Less than 5000
+        [InlineData(0, false)]    // Invalid: Does not start with "50"
+        public void StoreValidator_ValidationBehavior(int storeNo, bool expectedIsValid)
+        {
+            // Arrange
+            var store = new Store
+            {
+                No = storeNo,
+                Name = "Test Store",
+                Country = "Denmark",
+                Address = "Test Street 123"
+            };
+
+            var validator = new StoreValidator();
+
+            // Act
+            var validationResult = validator.Validate(store);
+
+            // Assert
+            Assert.Equal(expectedIsValid, validationResult.IsValid);
+        }
+
+
 
         [Fact]
         public async Task DeleteStore_ExistingStore_Success()

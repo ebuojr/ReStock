@@ -10,14 +10,14 @@ namespace RestockWeb.Services.Threshold
         {
         }
 
-        public async Task<bool> CreateThresholdAsync(InventoryThreshold threshold)
+        public async Task CreateThresholdAsync(InventoryThreshold threshold)
         {
-            return await PostAsync($"{BaseUrl}/create", threshold);
+            await PostAsync($"{BaseUrl}/create", threshold);
         }
 
-        public async Task<bool> DeleteThresholdAsync(int id)
+        public async Task DeleteThresholdAsync(int id)
         {
-            return await DeleteAsync($"{BaseUrl}/delete/{id}");
+            await DeleteAsync($"{BaseUrl}/delete/{id}");
         }
 
         public async Task<List<InventoryThreshold>?> GetAllThresholdsAsync()
@@ -35,9 +35,9 @@ namespace RestockWeb.Services.Threshold
             return await GetAsync<List<InventoryThreshold>>($"{BaseUrl}/store/{storeNo}");
         }
 
-        public async Task<bool> UpdateThresholdAsync(InventoryThreshold threshold)
+        public async Task UpdateThresholdAsync(InventoryThreshold threshold)
         {
-            return await PutAsync($"{BaseUrl}/update", threshold);
+            await PutAsync($"{BaseUrl}/update", threshold);
         }
     }
 }

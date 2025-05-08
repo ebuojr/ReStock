@@ -15,9 +15,9 @@ namespace RestockWeb.Services.Reorder
             return await PostAsyncWithResponse<List<Models.Reorder>, int>($"{BaseUrl}/create-potential-orders", storeNo);
         }
 
-        public Task<bool> ProcessReorderAsync(List<Models.Reorder> reorders)
+        public async Task ProcessReorderAsync(List<Models.Reorder> reorders)
         {
-            return PostAsync($"{BaseUrl}/process-reorders", reorders);
+            await PostAsync($"{BaseUrl}/process-reorders", reorders);
         }
     }
 }

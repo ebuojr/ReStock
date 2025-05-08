@@ -22,11 +22,19 @@ namespace RestockWeb.Services
             return await _httpClient.GetFromJsonAsync<T>(endpoint, _jsonOptions);
         }
 
-        protected async Task<bool> PostAsync<T>(string endpoint, T data)
+        protected async Task PostAsync<T>(string endpoint, T data)
         {
             var content = JsonContent.Create(data);
             var response = await _httpClient.PostAsync(endpoint, content);
-            return response.IsSuccessStatusCode;
+
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{await response.Content.ReadAsStringAsync()}", ex);
+            }
         }
 
         protected async Task<T?> PostAsyncWithResponse<T, TRequest>(string endpoint, TRequest data)
@@ -35,25 +43,36 @@ namespace RestockWeb.Services
             var response = await _httpClient.PostAsync(endpoint, content);
 
             if (response.IsSuccessStatusCode)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<T>(responseContent, _jsonOptions);
-            }
-
-            return default;
+                return JsonSerializer.Deserialize<T>(await response.Content.ReadAsStringAsync(), _jsonOptions);
+            else
+                throw new Exception($"Error: {await response.Content.ReadAsStringAsync()}");
         }
 
-        protected async Task<bool> PutAsync<T>(string endpoint, T data)
+        protected async Task PutAsync<T>(string endpoint, T data)
         {
             var content = JsonContent.Create(data);
             var response = await _httpClient.PutAsync(endpoint, content);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{await response.Content.ReadAsStringAsync()}", ex);
+            }
         }
 
-        protected async Task<bool> DeleteAsync(string endpoint)
+        protected async Task DeleteAsync(string endpoint)
         {
             var response = await _httpClient.DeleteAsync(endpoint);
-            return response.IsSuccessStatusCode;
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{await response.Content.ReadAsStringAsync()}", ex);
+            }
         }
     }
 }

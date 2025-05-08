@@ -210,9 +210,9 @@
             threshold.MinimumQuantity = inv.MinimumQuantity;
             threshold.ReorderQuantity = inv.ReorderQuantity;
             threshold.TargetQuantity = inv.TargetQuantity;
-
-            await InventoryService.UpsertStoreInventoryAsync(storeInventory);
+            
             await ThresholdService.UpdateThresholdAsync(threshold);
+            await InventoryService.UpsertStoreInventoryAsync(storeInventory);
 
             _ToastService.ShowSuccess($"{inv.ItemNo} has been updated successfully");
         }

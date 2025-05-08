@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using ReStockApi.Models;
 using ReStockApi.Services.Product;
 using ReStockApi.Services.Store;
@@ -10,18 +11,24 @@ namespace ReStockApi.Services.Threshold
         private readonly ReStockDbContext _db;
         private readonly IStoreService _storeService;
         private readonly IProductService _productService;
+        private readonly IValidator<Models.InventoryThreshold> _validator;
         private readonly ILogger<ThresholdService> _logger;
 
-        public ThresholdService(ReStockDbContext db, IStoreService storeService, IProductService productService, ILogger<ThresholdService> logger)
+        public ThresholdService(ReStockDbContext db, IStoreService storeService, IProductService productService, IValidator<InventoryThreshold> validator, ILogger<ThresholdService> logger)
         {
             _db = db;
             _storeService = storeService;
             _productService = productService;
+            _validator = validator;
             _logger = logger;
         }
 
         public async Task CreateThreshold(InventoryThreshold threshold)
         {
+            var result = await _validator.ValidateAsync(threshold);
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
+
             await _db.InventoryThresholds.AddAsync(threshold);
             await _db.SaveChangesAsync();
         }
@@ -84,6 +91,10 @@ namespace ReStockApi.Services.Threshold
 
         public async Task UpdateThresholdAsync(InventoryThreshold threshold)
         {
+            var result = await _validator.ValidateAsync(threshold);
+            if (!result.IsValid)
+                throw new ValidationException(result.Errors);
+
             _db.InventoryThresholds.Update(threshold);
             await _db.SaveChangesAsync();
         }

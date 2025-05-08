@@ -25,9 +25,9 @@
                 @foreach (var inv in FilteredInventoryList)
                 {
                     <div x-on:click="quantityEditor = !quantityEditor" @onclick="() => { SelectedDistributionCenterInventory = inv; }" class="grid grid-cols-1 lg:grid-cols-3 gap-2 bg-white p-6 hover:bg-gray-50 duration-75 first:rounded-t last:rounded-b">
-                        <span class="text-sm text-gray-600">Item No: <span class="font-medium">@inv.ItemNo</span></span>
-                        <span class="text-sm text-gray-600">Quantity: <span class="font-medium">@inv.Quantity</span></span>
-                        <span class="text-sm text-gray-600">Last Updated: <span class="font-medium">@inv.LastUpdated.ToString("g")</span></span>
+                        <span class="text-sm text-gray-600">Item No: <span class="font-bold">@inv.ItemNo</span></span>
+                        <span class="text-sm text-gray-600">Quantity: <span class="font-bold">@inv.Quantity</span></span>
+                        <span class="text-sm text-gray-600">Last Updated: <span class="font-bold">@inv.LastUpdated.ToString("g")</span></span>
                     </div>
                 }
 
@@ -121,15 +121,22 @@
 
     async Task UpdateInventory(DistributionCenterInventory inv)
     {
-        await InventoryService.UpsertDistributionCenterInventoryAsync(inv);
-        var updatedInventory = await InventoryService.GetDistributionCenterInventories();
-        if (updatedInventory != null)
+        try
         {
-            InventoryList = updatedInventory;
-            FilteredInventoryList = updatedInventory;
-            _ToastService.ShowSuccess("Inventory updated successfully.");
+            await InventoryService.UpsertDistributionCenterInventoryAsync(inv);
+            var updatedInventory = await InventoryService.GetDistributionCenterInventories();
+            if (updatedInventory != null)
+            {
+                InventoryList = updatedInventory;
+                FilteredInventoryList = updatedInventory;
+                _ToastService.ShowSuccess("Inventory updated successfully.");
+            }
+            else
+                _ToastService.ShowError("Error while update / fetch inventories.");
         }
-        else
-            _ToastService.ShowError("Error while update / fetch inventories.");
+        catch (Exception ex)
+        {
+            _ToastService.ShowError($"Error while updating inventory: {ex.Message}");
+        }
     }
 }

@@ -1,7 +1,6 @@
-﻿
-using ReStockApi.Services.JobLastRunService;
+﻿using ReStockApi.Services.JobLastRunService;
 using ReStockApi.Services.Threshold;
-using System.Security.Cryptography;
+
 
 namespace ReStockApi.BackroundService
 {

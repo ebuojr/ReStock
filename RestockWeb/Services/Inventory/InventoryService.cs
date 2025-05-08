@@ -36,9 +36,9 @@ namespace RestockWeb.Services.Inventory
             return await GetAsync<List<StoresInventoryWithThresholdDTO>>($"{BaseUrl}/store-inventory-with-Threshold-store-no?storeNo={storeNo}");
         }
 
-        public async Task<bool> UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
+        public async Task UpsertDistributionCenterInventoryAsync(DistributionCenterInventory inventory)
         {
-            return await PutAsync($"{BaseUrl}/distribution-center-inventory", inventory);
+            await PutAsync($"{BaseUrl}/distribution-center-inventory", inventory);
         }
 
         public async Task UpsertStoreInventoryAsync(StoreInventory inventory)

@@ -185,15 +185,15 @@
     {
         try
         {
-            var newProduct = await _ProductService.CreateProductAsync(product);
-            if (newProduct)
-                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
-
+            await _ProductService.CreateProductAsync(product);
+            Products = await _ProductService.GetProductsAsync();
+            FilteredProducts = Products;
             this.StateHasChanged();
+            _ToastService.ShowSuccess("Product created successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            _ToastService.ShowError("Failed to create product " + ex.Message);
         }
     }
 
@@ -201,13 +201,14 @@
     {
         try
         {
-            var updatedProduct = await _ProductService.UpdateProductAsync(product);
-            if (updatedProduct != null)
-                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
+            await _ProductService.UpdateProductAsync(product);
+            Products = await _ProductService.GetProductsAsync();
+            FilteredProducts = Products;
+            _ToastService.ShowSuccess("Product updated successfully");
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            _ToastService.ShowError("Failed to update product " + ex.Message);
         }
     }
 
@@ -215,15 +216,14 @@
     {
         try
         {
-            var deletedProduct = await _ProductService.DeleteProductAsync(product.Id);
-            if (deletedProduct)
-                Products = await _ProductService.GetProductsAsync() ?? new List<Product>();
-
+            await _ProductService.DeleteProductAsync(product.Id);
+            Products.Remove(product);
+            _ToastService.ShowSuccess("Product deleted successfully");
             this.StateHasChanged();
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            _ToastService.ShowError("Failed to delete product " + ex.Message);
         }
     }
 }

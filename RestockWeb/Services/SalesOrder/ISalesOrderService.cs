@@ -7,7 +7,7 @@ namespace RestockWeb.Services.SalesOrder
         Task<List<Models.SalesOrder>?> GetSalesOrdersAsync();
         Task<Models.SalesOrder?> GetSalesOrderAsync(string headerNo);
         Task<List<SalesOrderLine>?> GetSalesOrderLinesAsync(string headerNo);
-        Task<bool> CreateSalesOrderAsync(Models.SalesOrder order, List<SalesOrderLine> orderLines);
-        Task<bool> UpdateSalesOrderStatusAsync(string headerNo, OrderStatus status);
+        Task CreateSalesOrderAsync(Models.SalesOrder order, List<SalesOrderLine> orderLines);
+        Task UpdateSalesOrderStatusAsync(string headerNo, OrderStatus status);
     }
 }

@@ -10,14 +10,14 @@ namespace RestockWeb.Services.Product
         {
         }
 
-        public async Task<bool> CreateProductAsync(Models.Product product)
+        public async Task CreateProductAsync(Models.Product product)
         {
-            return await PostAsync($"{BaseUrl}/create", product);
+            await PostAsync($"{BaseUrl}/create", product);
         }
 
-        public async Task<bool> DeleteProductAsync(int id)
+        public async Task DeleteProductAsync(int id)
         {
-            return await DeleteAsync($"{BaseUrl}/delete/{id}");
+            await DeleteAsync($"{BaseUrl}/delete/{id}");
         }
 
         public async Task<Models.Product?> GetProductByNoAsync(string itemNo)
@@ -30,9 +30,9 @@ namespace RestockWeb.Services.Product
             return await GetAsync<List<Models.Product>>($"{BaseUrl}/all");
         }
 
-        public async Task<bool> UpdateProductAsync(Models.Product product)
+        public async Task UpdateProductAsync(Models.Product product)
         {
-            return await PutAsync($"{BaseUrl}/update", product);
+            await PutAsync($"{BaseUrl}/update", product);
         }
     }
 }

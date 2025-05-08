@@ -10,14 +10,14 @@ namespace RestockWeb.Services.Store
         {
         }
 
-        public async Task<bool> CreateStoreAsync(Models.Store store)
+        public async Task CreateStoreAsync(Models.Store store)
         {
-            return await PostAsync($"{BaseUrl}/create", store);
+            await PostAsync($"{BaseUrl}/create", store);
         }
 
-        public async Task<bool> DeleteStoreAsync(int id)
+        public async Task DeleteStoreAsync(int id)
         {
-            return await DeleteAsync($"{BaseUrl}/delete/{id}");
+            await DeleteAsync($"{BaseUrl}/delete/{id}");
         }
 
         public async Task<List<Models.Store>?> GetAllStoresAsync()
@@ -30,9 +30,9 @@ namespace RestockWeb.Services.Store
             return await GetAsync<Models.Store>($"{BaseUrl}/get/{storeNo}");
         }
 
-        public async Task<bool> UpdateStoreAsync(Models.Store store)
+        public async Task UpdateStoreAsync(Models.Store store)
         {
-            return await PutAsync($"{BaseUrl}/update", store);
+            await PutAsync($"{BaseUrl}/update", store);
         }
     }
 }

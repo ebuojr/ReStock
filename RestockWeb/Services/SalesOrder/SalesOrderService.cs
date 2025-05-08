@@ -10,7 +10,7 @@ namespace RestockWeb.Services.SalesOrder
         {
         }
 
-        public async Task<bool> CreateSalesOrderAsync(Models.SalesOrder order, List<SalesOrderLine> orderLines)
+        public async Task CreateSalesOrderAsync(Models.SalesOrder order, List<SalesOrderLine> orderLines)
         {
             var createOrderDto = new
             {
@@ -18,7 +18,7 @@ namespace RestockWeb.Services.SalesOrder
                 OrderLines = orderLines
             };
             
-            return await PostAsync($"{BaseUrl}/create", createOrderDto);
+            await PostAsync($"{BaseUrl}/create", createOrderDto);
         }
 
         public async Task<Models.SalesOrder?> GetSalesOrderAsync(string headerNo)
@@ -36,9 +36,9 @@ namespace RestockWeb.Services.SalesOrder
             return await GetAsync<List<Models.SalesOrder>>($"{BaseUrl}/all");
         }
 
-        public async Task<bool> UpdateSalesOrderStatusAsync(string headerNo, OrderStatus status)
+        public async Task UpdateSalesOrderStatusAsync(string headerNo, OrderStatus status)
         {
-            return await PutAsync($"{BaseUrl}/update-status/{headerNo}", new { Status = status });
+            await PutAsync($"{BaseUrl}/update-status/{headerNo}", new { Status = status });
         }
     }
 }

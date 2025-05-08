@@ -6,8 +6,8 @@ namespace RestockWeb.Services.Product
     {
         Task<Models.Product?> GetProductByNoAsync(string itemNo);
         Task<List<Models.Product>?> GetProductsAsync();
-        Task<bool> CreateProductAsync(Models.Product product);
-        Task<bool> UpdateProductAsync(Models.Product product);
-        Task<bool> DeleteProductAsync(int id);
+        Task CreateProductAsync(Models.Product product);
+        Task UpdateProductAsync(Models.Product product);
+        Task DeleteProductAsync(int id);
     }
 }

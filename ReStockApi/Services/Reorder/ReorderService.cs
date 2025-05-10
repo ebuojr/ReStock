@@ -44,8 +44,6 @@ namespace ReStockApi.Services.Reorder
                     // is less than the minimum reorder quantity
                     if (reorderAmount < item.ReorderQuantity)
                     {
-                        Console.WriteLine($"The minimum ordering for item {item.ItemNo} in store {storeNo} is {item.ReorderQuantity}.");
-
                         // Log the minimum ordering requirement
                         await _ReorderLogService
                             .LogAsync(
@@ -69,7 +67,6 @@ namespace ReStockApi.Services.Reorder
 
                     if (dcInventory.Quantity < reorderAmount)
                     {
-                        Console.WriteLine($"The distribution center inventory for item {item.ItemNo} is less than the reorder amount.");
                         // Log the distribution center inventory
                         await _ReorderLogService
                             .LogAsync(
@@ -116,6 +113,7 @@ namespace ReStockApi.Services.Reorder
                 var storeInventory = await _InventoryService.GetStoreInventoryAsync(reorder.StoreNo, reorder.ItemNo);
 
                 storeInventory.Quantity += reorder.Quantity;
+
                 // update the inventories
                 await _InventoryService.UpsertDistributionCenterInventoryAsync(dcItem);
                 await _InventoryService.UpsertStoreInventoryAsync(storeInventory);

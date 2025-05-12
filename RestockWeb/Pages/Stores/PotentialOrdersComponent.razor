@@ -84,6 +84,8 @@
 
 
 @code {
+    [Inject]
+    public ISalesOrderService _SalesOrderService { get; set; }
     [Parameter]
     public List<Models.Reorder> Reorders { get; set; } = new();
 
@@ -106,8 +108,22 @@
         }
     }
 
-    void ConfirmReorders()
+    async Task ConfirmReorders()
     {
-        _ToastService.ShowSuccess("Reorders confirmed successfully");
+        try
+        {
+            if (Reorders == null || !Reorders.Any())
+            {
+                _ToastService.ShowError("No reorders to confirm");
+                return;
+            }
+
+            await _SalesOrderService.CreateSalesOrderAsync(Reorders);
+            _ToastService.ShowSuccess("Reorders confirmed successfully");
+        }
+        catch (Exception ex)
+        {
+            _ToastService.ShowError($"Error confirming reorders: {ex.Message}");
+        }
     }
 }

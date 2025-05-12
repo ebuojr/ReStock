@@ -1,9 +1,138 @@
 ﻿@page "/sales-orders"
 
 <div class="relative w-full p-6">
-    <PageTitleComponent Title="Sales order overview" Description="This page provides an overview of all reorder logs." />
+    <PageTitleComponent Title="Sales order overview" Description="This page provides an overview of all sales orders." />
+    <div class="flex flex-wrap gap-4 mb-6 mt-4">
+        <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search by Store No, Header No..."
+               class="border border-gray-300 rounded px-4 py-2 text-base w-64" />
+    </div>
+    <div class="w-full bg-white border border-gray-300 rounded">
+        @if (FilteredSalesOrders == null || !FilteredSalesOrders.Any())
+        {
+            <div class="text-center text-gray-500 py-12 text-lg">No sales orders found.</div>
+        }
+        else
+        {
+            <!-- Table Header -->
+            <div class="grid grid-cols-5 text-base font-semibold text-gray-600 bg-gray-100 border-b border-gray-300">
+                <div class="px-4 py-2">Header No</div>
+                <div class="px-4 py-2">Store No</div>
+                <div class="px-4 py-2">Order Date</div>
+                <div class="px-4 py-2">Status</div>
+                <div class="px-4 py-2"></div>
+            </div>
+            <!-- Table Rows -->
+            @foreach (var order in FilteredSalesOrders)
+            {
+                var isExpanded = ExpandedHeaderNo == order.SalesOrder.HeaderNo;
+                <div class="contents" x-data="{ expanded: @isExpanded.ToString().ToLower() }" x-effect="expanded = @isExpanded.ToString().ToLower()">
+                    <div class="grid grid-cols-5 text-base items-center hover:bg-blue-50 transition cursor-pointer"
+                         @onclick="() => ToggleExpand(order.SalesOrder.HeaderNo)">
+                        <div class="px-4 py-2">@order.SalesOrder.HeaderNo</div>
+                        <div class="px-4 py-2">@order.SalesOrder.StoreNo</div>
+                        <div class="px-4 py-2">@order.SalesOrder.OrderDate.ToString("yyyy-MM-dd")</div>
+                        <div class="px-4 py-2">
+                            <span class="@(order.SalesOrder.OrderStatus == OrderStatus.Shipped ? "text-green-600" : "text-yellow-600")">
+                                @order.SalesOrder.OrderStatus
+                            </span>
+                        </div>
+                        <div class="px-4 py-2 flex items-center">
+                            <button type="button"
+                                    class="flex items-center text-blue-500 hover:text-blue-700 focus:outline-none"
+                                    tabindex="-1">
+                                <svg :class="expanded ? 'rotate-180' : ''" class="w-5 h-5 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div x-show="expanded"
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 max-h-0"
+                         x-transition:enter-end="opacity-100 max-h-40"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 max-h-40"
+                         x-transition:leave-end="opacity-0 max-h-0"
+                         class="bg-blue-50"
+                         style="display: @(isExpanded ? "block" : "none")">
+                        <div class="px-8 py-4">
+                            <div class="grid grid-cols-3 gap-2 text-sm font-medium text-gray-600 mb-1">
+                                <div>Line No</div>
+                                <div>Item No</div>
+                                <div>Quantity</div>
+                            </div>
+                            @foreach (var line in order.SalesOrderLines)
+                            {
+                                <div class="grid grid-cols-3 gap-2 text-sm text-gray-800 py-0.5">
+                                    <div>@line.LineNo</div>
+                                    <div>@line.ItemNo</div>
+                                    <div>@line.Quantity</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 </div>
 
 @code {
+    [Inject]
+    public ISalesOrderService SalesOrderService { get; set; } = default!;
 
+    [Inject]
+    private IToastService ToastService { get; set; } = default!;
+    private List<RestockWeb.DTOs.SalesOrderDTO> SalesOrders = new();
+    private List<RestockWeb.DTOs.SalesOrderDTO> FilteredSalesOrders = new();
+    private string _searchTerm = string.Empty;
+    private string SearchTerm
+    {
+        get => _searchTerm;
+        set
+        {
+            if (_searchTerm != value)
+            {
+                _searchTerm = value;
+                FilterSalesOrders();
+            }
+        }
+    }
+    private string? ExpandedHeaderNo = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            SalesOrders = await SalesOrderService.GetAllSalesOrdersAsync();
+            FilteredSalesOrders = SalesOrders;
+        }
+        catch (Exception ex)
+        {
+            ToastService.ShowError($"Failed to load sales orders: {ex.Message}");
+        }
+    }
+
+    private void ToggleExpand(string headerNo)
+    {
+        if (ExpandedHeaderNo == headerNo)
+            ExpandedHeaderNo = null;
+        else
+            ExpandedHeaderNo = headerNo;
+    }
+
+    private void FilterSalesOrders()
+    {
+        if (string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            FilteredSalesOrders = SalesOrders;
+        }
+        else
+        {
+            FilteredSalesOrders = SalesOrders.Where(order =>
+                order.SalesOrder.HeaderNo.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                order.SalesOrder.StoreNo.ToString().Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
+        }
+    }
 }

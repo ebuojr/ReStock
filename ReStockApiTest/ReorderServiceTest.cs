@@ -57,7 +57,7 @@ namespace ReStockApiTest
         public async Task CreatePotentialOrdersByStoreNoAsync_InvalidStoreNo_ThrowsArgumentNullException(int storeNo)
         {
             // Arrange
-            _storeServiceMock.Setup(s => s.GetStore(storeNo)).ReturnsAsync((Store)null);
+            _storeServiceMock.Setup(s => s.StoreExists(storeNo));
 
             // Act
             Func<Task> act = async () => await _reorderService.CreatePotentialOrdersByStoreNoAsync(storeNo);

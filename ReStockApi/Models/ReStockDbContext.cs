@@ -12,6 +12,7 @@ namespace ReStockApi.Models
         public DbSet<DistributionCenterInventory> DistributionCenterInventories { get; set; }
         public DbSet<InventoryThreshold> InventoryThresholds { get; set; }
         public DbSet<SalesOrder> SalesOrders { get; set; }
+        public DbSet<SalesOrderNumber> SalesOrderNumber { get; set; }
         public DbSet<SalesOrderLine> SalesOrderLines { get; set; }
         public DbSet<Reorder> Reorders { get; set; }
         public DbSet<ReOrderLog> ReOrderLogs { get; set; }
@@ -39,6 +40,9 @@ namespace ReStockApi.Models
 
             modelBuilder.Entity<SalesOrderLine>().HasKey(sol => sol.Id);
             modelBuilder.Entity<SalesOrderLine>().HasIndex(sol => new { sol.HeaderNo, sol.LineNo }).IsUnique();
+
+            modelBuilder.Entity<SalesOrderNumber>().HasKey(son => son.Id);
+            modelBuilder.Entity<SalesOrderNumber>().HasIndex(son => son.No).IsUnique();
 
             modelBuilder.Entity<Reorder>().HasKey(r => r.Id);
             modelBuilder.Entity<Reorder>().HasIndex(r => new { r.StoreNo, r.ItemNo }).IsUnique();

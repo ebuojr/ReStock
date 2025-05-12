@@ -35,6 +35,13 @@ namespace ReStockApi.Services.Store
         public async Task<Models.Store> GetStore(int storeNo)
             => await _db.Stores.FirstOrDefaultAsync(s => s.No == storeNo);
 
+        public async Task StoreExists(int storeNo)
+        {
+            var exists = await _db.Stores.AnyAsync(s => s.No == storeNo);
+            if (!exists)
+                throw new ArgumentNullException(nameof(storeNo), "Store number does not exist.");
+        }
+
         public async Task UpdateStore(Models.Store store)
         {
             _db.Stores.Update(store);

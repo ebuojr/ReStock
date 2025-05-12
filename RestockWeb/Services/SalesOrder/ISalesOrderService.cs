@@ -1,13 +1,13 @@
-using RestockWeb.Models;
+using RestockWeb.DTOs;
 
 namespace RestockWeb.Services.SalesOrder
 {
     public interface ISalesOrderService
     {
-        Task<List<Models.SalesOrder>?> GetSalesOrdersAsync();
-        Task<Models.SalesOrder?> GetSalesOrderAsync(string headerNo);
-        Task<List<SalesOrderLine>?> GetSalesOrderLinesAsync(string headerNo);
-        Task CreateSalesOrderAsync(Models.SalesOrder order, List<SalesOrderLine> orderLines);
-        Task UpdateSalesOrderStatusAsync(string headerNo, OrderStatus status);
+        Task CreateSalesOrderAsync(List<Models.Reorder> reorders);
+        Task<List<SalesOrderDTO>> GetAllSalesOrdersAsync();
+        Task<SalesOrderDTO> GetSalesOrderByHeaderNoAsync(string headerNo);
+        Task<List<SalesOrderDTO>> GetSalesOrderByStoreNoAsync(int storeNo);
+        Task<Models.SalesOrder> UpdateSalesOrderHeaderAsync(Models.SalesOrder salesOrder);
     }
 }

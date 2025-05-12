@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReStockApi.DTOs;
+using ReStockApi.Models;
 using ReStockApi.Services.SalesOrder;
 
 namespace ReStockApi.Controllers
@@ -15,23 +15,30 @@ namespace ReStockApi.Controllers
         }
 
         [HttpPost("craete-sales-order")]
-        public async Task<IActionResult> CreateSalesOrder([FromBody] CreateSalesOrderDTO salesOrder)
+        public async Task<IActionResult> CreateSalesOrder([FromBody] List<Reorder> reorders)
         {
-            var result = await _salesOrderService.CreateSalesOrderAsync(salesOrder.SalesOrder, salesOrder.SalesOrderLines);
-            return Ok(result);
+            await _salesOrderService.CreateSalesOrderAsync(reorders);
+            return Ok();
         }
 
-        [HttpGet("get-sales-order-by-headerNo")]
+        [HttpGet("get-sales-order-by-headerNo/{headerNo}")]
         public async Task<IActionResult> GetSalesOrderByHeaderNo(string headerNo)
         {
             var result = await _salesOrderService.GetSalesOrderByHeaderNoAsync(headerNo);
             return Ok(result);
         }
 
-        [HttpGet("get-sales-order-by-storeNo")]
+        [HttpGet("get-sales-order-by-storeNo/{storeNo}")]
         public async Task<IActionResult> GetSalesOrderByStoreNo(int storeNo)
         {
             var result = await _salesOrderService.GetSalesOrderByStoreNoAsync(storeNo);
+            return Ok(result);
+        }
+
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllSalesOrders()
+        {
+            var result = await _salesOrderService.GetAllSalesOrdersAsync();
             return Ok(result);
         }
 

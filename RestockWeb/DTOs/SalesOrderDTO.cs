@@ -1,8 +1,8 @@
-﻿using ReStockApi.Models;
+﻿using RestockWeb.Models;
 
-namespace ReStockApi.DTOs
+namespace RestockWeb.DTOs
 {
-    public class CreateSalesOrderDTO
+    public class SalesOrderDTO
     {
         public SalesOrder SalesOrder { get; set; }
         public List<SalesOrderLine> SalesOrderLines { get; set; }

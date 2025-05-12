@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReStockApi.Models;
 
@@ -10,9 +11,11 @@ using ReStockApi.Models;
 namespace ReStockApi.Migrations
 {
     [DbContext(typeof(ReStockDbContext))]
-    partial class ReStockDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250511105156_salesordernumber")]
+    partial class salesordernumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.4");
@@ -230,8 +233,14 @@ namespace ReStockApi.Migrations
                     b.Property<int>("LineNo")
                         .HasColumnType("INTEGER");
 
+                    b.Property<decimal>("LineTotal")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

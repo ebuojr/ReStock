@@ -3,6 +3,7 @@
     public enum ReorderLogType
     {
         MinimumReorder,
-        DCInventory
+        DCInventory,
+        Reorder,
     }
 }

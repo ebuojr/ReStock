@@ -1,4 +1,6 @@
+using RestockWeb.DTOs;
 using RestockWeb.Models;
+using System.Security.Cryptography;
 
 namespace RestockWeb.Services.SalesOrder
 {
@@ -10,35 +12,30 @@ namespace RestockWeb.Services.SalesOrder
         {
         }
 
-        public async Task CreateSalesOrderAsync(Models.SalesOrder order, List<SalesOrderLine> orderLines)
+        public async Task CreateSalesOrderAsync(List<Models.Reorder> reorders)
         {
-            var createOrderDto = new
-            {
-                Order = order,
-                OrderLines = orderLines
-            };
-            
-            await PostAsync($"{BaseUrl}/create", createOrderDto);
+            await PostAsync($"{BaseUrl}/craete-sales-order", reorders);
         }
 
-        public async Task<Models.SalesOrder?> GetSalesOrderAsync(string headerNo)
+        public async Task<List<SalesOrderDTO>> GetAllSalesOrdersAsync()
         {
-            return await GetAsync<Models.SalesOrder>($"{BaseUrl}/get/{headerNo}");
+            return await GetAsync<List<SalesOrderDTO>>($"{BaseUrl}/get-all") ?? new List<SalesOrderDTO>();
         }
 
-        public async Task<List<SalesOrderLine>?> GetSalesOrderLinesAsync(string headerNo)
+        public async Task<SalesOrderDTO> GetSalesOrderByHeaderNoAsync(string headerNo)
         {
-            return await GetAsync<List<SalesOrderLine>>($"{BaseUrl}/lines/{headerNo}");
+            return await GetAsync<SalesOrderDTO>($"{BaseUrl}/get-sales-order-by-headerNo/{headerNo}");
         }
 
-        public async Task<List<Models.SalesOrder>?> GetSalesOrdersAsync()
+        public async Task<List<SalesOrderDTO>> GetSalesOrderByStoreNoAsync(int storeNo)
         {
-            return await GetAsync<List<Models.SalesOrder>>($"{BaseUrl}/all");
+            return await GetAsync<List<SalesOrderDTO>>($"{BaseUrl}/get-sales-order-by-storeNo/{storeNo}") ?? new List<SalesOrderDTO>();
         }
 
-        public async Task UpdateSalesOrderStatusAsync(string headerNo, OrderStatus status)
+        public async Task<Models.SalesOrder> UpdateSalesOrderHeaderAsync(Models.SalesOrder salesOrder)
         {
-            await PutAsync($"{BaseUrl}/update-status/{headerNo}", new { Status = status });
+            await PutAsync($"{BaseUrl}", salesOrder);
+            return salesOrder;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿<div class="text-center">
-    <h2 class="mb-6 font-semibold  text-gray-800">Potential Orders</h2>
+    <h2 class="mb-6 mt-4 font-semibold  text-gray-800">Potential Orders</h2>
 </div>
 
 <div class="grid grid-cols-5 border border-neutral-200 mx-auto rounded-lg overflow-auto">
@@ -76,8 +76,8 @@
     }
 </div>
 <div class="mt-4 flex items-center gap-2">
-    <button x-on:click="potentialOrdersComponent = false" class="bg-gray-200 font-medium text-gray-600 px-4 py-2 rounded-md mt-4 hover:opacity-60 duration-75 @(Reorders.Any() ? "" : "hidden")">Cancel</button>
-    <button x-on:click="potentialOrdersComponent = false" class="w-full bg-blue-500 font-medium text-white px-4 py-2 rounded-md mt-4 hover:opacity-60 duration-75 @(Reorders.Any() ? "" : "hidden")" @onclick="() => ConfirmReorders()">
+    <button x-on:click="potentialOrdersComponent = false" class="bg-gray-200 font-medium text-gray-600 px-4 py-2 rounded-md mt-4 hover:bg-gray-300 duration-75 @(Reorders.Any() ? "" : "w-full")">Cancel</button>
+    <button x-on:click="potentialOrdersComponent = false" class="w-full bg-blue-500 font-medium text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-600 duration-75 @(Reorders.Any() ? "" : "hidden")" @onclick="() => ConfirmReorders()">
         Confirm
     </button>
 </div>

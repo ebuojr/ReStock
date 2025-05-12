@@ -64,7 +64,17 @@ namespace ReStockApi.Services.Reorder
                     var dcInventory = await _InventoryService.GetDistributionCenterInventoryAsync(item.ItemNo);
 
                     if (dcInventory.Quantity < 1)
-                        throw new ArgumentNullException(nameof(dcInventory), "Distribution center inventory is less than 1.");
+                    {
+                        await _ReorderLogService
+                            .LogAsync(
+                            storeNo,
+                            item.ItemNo,
+                            0,
+                            ReorderLogType.DCInventory.ToString(),
+                            $"Distribution center inventory for item {item.ItemNo} is less than 1.", false);
+
+                        continue;
+                    }
 
                     if (dcInventory.Quantity < reorderAmount)
                     {

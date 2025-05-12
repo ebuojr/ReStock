@@ -22,7 +22,8 @@
     <!-- Reorder Logs Table -->
     <div class="grid grid-cols-1 divide-y divide-gray-300 border border-gray-300 rounded">
         <!-- Table Header -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 2fr;" class="font-semibold bg-gray-100 p-4">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;" class="font-semibold bg-gray-100 p-4">
+            <div>Type</div>
             <div>Store No</div>
             <div>Item No</div>
             <div>Quantity</div>
@@ -41,7 +42,8 @@
         {
             @foreach (var log in FilteredReOrderLogs)
             {
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 2fr;" class="items-center p-4 hover:bg-gray-50">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;" class="items-center p-4 hover:bg-gray-50">
+                    <div>@log.EventType</div>
                     <div>@log.StoreNo</div>
                     <div>@log.ItemNo</div>
                     <div>@log.Quantity</div>

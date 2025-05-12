@@ -13,8 +13,11 @@
             <!-- CreatePotentialOrders Button -->
             <button @onclick="CreatePotentialOrders"
                     x-on:click="potentialOrdersComponent = true"
-                    class="text-sm bg-green-100 text-green-600 border-green-400 border px-4 py-2 rounded">
+                    class="flex items-center gap-2 text-sm bg-green-500 text-white font-semibold px-4 py-2 rounded hover:opacity-90 duration-75">
                 Create Potential Orders
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                    <path fill-rule="evenodd" d="M9.58 1.077a.75.75 0 0 1 .405.82L9.165 6h4.085a.75.75 0 0 1 .567 1.241l-6.5 7.5a.75.75 0 0 1-1.302-.638L6.835 10H2.75a.75.75 0 0 1-.567-1.241l6.5-7.5a.75.75 0 0 1 .897-.182Z" clip-rule="evenodd" />
+                </svg>
             </button>
 
 
@@ -125,7 +128,7 @@
            <div x-show="potentialOrdersComponent"
                 x-cloak
                 x-transition
-                class="bg-white max-w-7xl p-4 border border-neutral-200 rounded-lg shadow-lg">
+                class="bg-white max-w-7xl p-3 border border-neutral-200 rounded-lg shadow-lg">
                <PotentialOrdersComponent Reorders="PotentialOrders" />
            </div>
         </div>
@@ -229,7 +232,12 @@
         {
             Loading = true;
             PotentialOrders = await ReorderService.CreatePotentialOrdersByStoreNoAsync(StoreNo);
-            Console.WriteLine($"Potential orders created: {PotentialOrders.Count()}");
+            if (!PotentialOrders.Any())
+            {
+                _ToastService.ShowInfo("No potential orders were generated for this store.");  
+                return;
+            }
+
             _ToastService.ShowSuccess("Potential orders have been created successfully");
         }
         catch (Exception ex)

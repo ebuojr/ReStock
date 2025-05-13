@@ -28,12 +28,4 @@
   <ItemGroup>
     <Folder Include="Services\WorkerService\" />
   </ItemGroup>
-
-  <ItemGroup>
-  <None Update="..\ReStockApi\bin\Debug\net9.0\ReStockApi.deps.json">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    <Link>ReStockApi.deps.json</Link>
-  </None>
-</ItemGroup>
-
 </Project>

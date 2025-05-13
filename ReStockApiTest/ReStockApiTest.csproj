@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Folder Include="ApiPerformanceTest\" />
+    <Folder Include="IntegrationTest\" />
   </ItemGroup>
 
 </Project>

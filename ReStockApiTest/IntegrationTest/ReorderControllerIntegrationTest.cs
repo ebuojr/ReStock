@@ -18,7 +18,7 @@ namespace ReStockApiTest.IntegrationTest
         [Fact]
         public async Task CreatePotentialOrders_ReturnsOk()
         {
-            var response = await _client.PostAsJsonAsync("/api/reorder/create-potential-orders", 1);
+            var response = await _client.PostAsJsonAsync("/api/reorder/create-potential-orders", 5090);
             response.EnsureSuccessStatusCode();
         }
     }

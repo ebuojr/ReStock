@@ -22,28 +22,31 @@ namespace ReStockApiTest.IntegrationTest
         {
             var response = await _client.GetAsync("/api/store/all");
             response.EnsureSuccessStatusCode();
-        }
-
-        [Fact]
+        }        [Fact]
         public async Task CreateUpdateDeleteStore_Works()
         {
-            var store = new Store() { No = 5090, Name = "Test Store", Address = "Test Address", Country = "Test Country" };
+            // Create a new store with the correct model fields (No instead of StoreNo)
+            var store = new { No = 5555, Name = "Test Store", Country = "Test Country", Address = "Test Address" };
             var createResp = await _client.PostAsJsonAsync("/api/store/create", store);
             createResp.EnsureSuccessStatusCode();
 
-            var updateStore = new Store() { No = 5090, Name = "Updated Store", Address = "Updated Address", Country = "Test Country" };
+            // Update the store with the correct model fields (No instead of StoreNo)
+            var updateStore = new { No = 5555, Name = "Updated Store", Country = "Updated Country", Address = "Updated Address" };
             var updateResp = await _client.PutAsJsonAsync("/api/store/update", updateStore);
-            updateResp.EnsureSuccessStatusCode();
-
-            var getStoreResposne = await _client.GetFromJsonAsync<Store>("/api/store/get/5090");
-            var deleteResp = await _client.DeleteAsync($"/api/store/delete/{getStoreResposne.Id}");
+            updateResp.EnsureSuccessStatusCode();            // First, get the store to find its ID
+            var getStoreResp = await _client.GetAsync("/api/store/get/5555");
+            getStoreResp.EnsureSuccessStatusCode();
+            var storeObj = await getStoreResp.Content.ReadFromJsonAsync<ReStockApi.Models.Store>();
+            
+            // Delete the store using its ID, not the No property
+            var deleteResp = await _client.DeleteAsync($"/api/store/delete/{storeObj.Id}");
             deleteResp.EnsureSuccessStatusCode();
         }
 
         [Fact]
         public async Task GetStoreByNo_ReturnsOk()
         {
-            var response = await _client.GetAsync("/api/store/get/1");
+            var response = await _client.GetAsync("/api/store/get/5001");
             response.EnsureSuccessStatusCode();
         }
     }

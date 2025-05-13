@@ -32,14 +32,14 @@ namespace ReStockApiTest.IntegrationTest
         [Fact]
         public async Task GetSalesOrderByStoreNo_ReturnsOk()
         {
-            var response = await _client.GetAsync("/api/salesorder/get-sales-order-by-storeNo/1");
+            var response = await _client.GetAsync("/api/salesorder/get-sales-order-by-storeNo/5001");
             response.EnsureSuccessStatusCode();
         }
 
         [Fact]
         public async Task CreateUpdateSalesOrder_Works()
         {
-            var reorder = new[] { new { StoreNo = 5090, ItemNo = "TEST999", Quantity = 1 } };
+            var reorder = new[] { new { StoreNo = 5090, ItemNo = "ZIZ-111-1111", Quantity = 1 } };
             var createResp = await _client.PostAsJsonAsync("/api/salesorder/craete-sales-order", reorder);
             createResp.EnsureSuccessStatusCode();
 

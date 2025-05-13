@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using ReStockApi;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using FluentAssertions;
+using ReStockApi.Models;
 
 namespace ReStockApiTest.IntegrationTest
 {
@@ -18,15 +20,53 @@ namespace ReStockApiTest.IntegrationTest
         [Fact]
         public async Task GetThresholds_ReturnsOk()
         {
+            // Act
             var response = await _client.GetAsync("/api/threshold/all");
-            response.EnsureSuccessStatusCode();
+            
+            // Assert
+            response.IsSuccessStatusCode.Should().BeTrue("because retrieving all thresholds should succeed");
+            
+            // Check content if available
+            if (response.Content.Headers.ContentLength > 0)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(content))
+                {
+                    var thresholds = await response.Content.ReadFromJsonAsync<List<InventoryThreshold>>();
+                    thresholds.Should().NotBeNull("because the API should return a list of thresholds (even if empty)");
+                }
+            }
         }
 
         [Fact]
         public async Task GetThreshold_ReturnsOk()
         {
-            var response = await _client.GetAsync("/api/threshold/store-item?storeNo=1&ItemNo=TEST999");
-            response.EnsureSuccessStatusCode();
+            // Arrange
+            var storeNo = 1;
+            var itemNo = "TEST999";
+            
+            // Act
+            var response = await _client.GetAsync($"/api/threshold/store-item?storeNo={storeNo}&ItemNo={itemNo}");
+            
+            // Assert
+            response.IsSuccessStatusCode.Should().BeTrue($"because retrieving threshold for store {storeNo} and item {itemNo} should succeed");
+            
+            // Check content if available
+            if (response.Content.Headers.ContentLength > 0)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(content) && content != "null")
+                {
+                    var threshold = await response.Content.ReadFromJsonAsync<InventoryThreshold>();
+                    threshold.Should().NotBeNull("because we expect a threshold configuration to be returned");
+                    
+                    if (threshold != null)
+                    {
+                        threshold.StoreNo.Should().Be(storeNo, "because we requested this specific store number");
+                        threshold.ItemNo.Should().Be(itemNo, "because we requested this specific item number");
+                    }
+                }
+            }
         }
 
         [Fact]

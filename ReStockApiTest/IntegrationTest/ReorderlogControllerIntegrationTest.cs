@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using ReStockApi;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using FluentAssertions;
+using ReStockApi.Models;
 
 namespace ReStockApiTest.IntegrationTest
 {
@@ -18,9 +20,25 @@ namespace ReStockApiTest.IntegrationTest
         [Fact]
         public async Task GetLogs_ReturnsOk()
         {
+            // Arrange
             var fromdate = System.DateTime.UtcNow.AddDays(-1).ToString("yyyy-MM-dd");
+            
+            // Act
             var response = await _client.GetAsync($"/api/reorderlog/get?fromdate={fromdate}&type=&no=&storeNo=");
-            response.EnsureSuccessStatusCode();
+            
+            // Assert
+            response.IsSuccessStatusCode.Should().BeTrue("because retrieving reorder logs should succeed");
+            
+            // Check content if available
+            if (response.Content.Headers.ContentLength > 0)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrEmpty(content))
+                {
+                    var logs = await response.Content.ReadFromJsonAsync<List<ReOrderLog>>();
+                    logs.Should().NotBeNull("because the API should return a list of logs (even if empty)");
+                }
+            }
         }
     }
 }

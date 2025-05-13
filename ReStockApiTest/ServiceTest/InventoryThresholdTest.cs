@@ -9,7 +9,7 @@ using ReStockApi.Services.Store;
 using ReStockApi.Services.Threshold;
 using Xunit;
 
-namespace ReStockApiTest
+namespace ReStockApiTest.ServiceTest
 {
     public class InventoryThresholdTest : IDisposable
     {

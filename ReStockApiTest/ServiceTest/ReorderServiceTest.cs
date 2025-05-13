@@ -8,7 +8,7 @@ using ReStockApi.Services.Reorder;
 using ReStockApi.Services.ReorderLog;
 using ReStockApi.Services.Store;
 
-namespace ReStockApiTest
+namespace ReStockApiTest.ServiceTest
 {
     public class ReorderServiceTest : IDisposable
     {

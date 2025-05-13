@@ -3,7 +3,7 @@ using ReStockApi.Models;
 using ReStockApi.Services.Store;
 using ReStockApi.Validation;
 
-namespace ReStockApiTest
+namespace ReStockApiTest.ServiceTest
 {
     public class StoreServiceTest : IDisposable
     {

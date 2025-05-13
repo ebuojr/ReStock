@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="bunit" Version="1.39.5" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="FluentAssertions" Version="8.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.2" />
@@ -29,7 +30,6 @@
 
   <ItemGroup>
     <Folder Include="ApiPerformanceTest\" />
-    <Folder Include="IntegrationTest\" />
   </ItemGroup>
 
 </Project>

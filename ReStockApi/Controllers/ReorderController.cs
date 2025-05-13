@@ -20,14 +20,5 @@ namespace ReStockApi.Controllers
             var result = await _reorderService.CreatePotentialOrdersByStoreNoAsync(storeNo);
             return Ok(result);
         }
-
-        [HttpPost("process-reorders")]
-        public async Task<IActionResult> ProcessReorder([FromBody] List<Reorder> reorder)
-        {
-            await _reorderService.ProcessReorderAsync(reorder);
-            return Ok();
-        }
-
-
     }
 }

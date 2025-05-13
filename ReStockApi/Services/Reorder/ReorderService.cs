@@ -32,13 +32,10 @@ namespace ReStockApi.Services.Reorder
             if (thresholds == null || !thresholds.Any())
                 throw new ArgumentNullException(nameof(thresholds), "No thresholds found for the given store number.");
 
-            var alreadyReordered = await GetReordersByStoreNoAsync(storeNo);
-
             foreach (var item in thresholds)
             {
                 if (item.CurrentQuantity <= item.MinimumQuantity)
                 {
-                    var currentReorderQty = alreadyReordered.Where(x => x.ItemNo == item.ItemNo)?.Sum(e => e.Quantity) ?? 0;
                     int reorderAmount = item.TargetQuantity - item.CurrentQuantity;
 
                     // check if the reorder amount
@@ -94,7 +91,7 @@ namespace ReStockApi.Services.Reorder
                     {
                         StoreNo = storeNo,
                         ItemNo = item.ItemNo,
-                        Quantity = reorderAmount - currentReorderQty,
+                        Quantity = reorderAmount,
                         CreatedAt = DateTime.UtcNow
                     });
 
@@ -110,35 +107,6 @@ namespace ReStockApi.Services.Reorder
             }
 
             return result;
-        }
-
-        public async Task ProcessReorderAsync(List<Models.Reorder> reorders)
-        {
-            List<Models.Reorder> reorderToInsert = new();
-
-            foreach (var reorder in reorders)
-            {
-                await _InventoryService.IncreaseStoreInventoryAsync(reorder.StoreNo, reorder.ItemNo, reorder.Quantity);
-                await _InventoryService.DescreaseDistributionCenterInventoryAsync(reorder.ItemNo, reorder.Quantity);
-                reorderToInsert.Add(reorder);
-            }
-
-            await InsertReorderAsync(reorderToInsert);
-        }
-
-        public async Task InsertReorderAsync(List<Models.Reorder> reorders)
-        {
-            await _db.Reorders.AddRangeAsync(reorders);
-            _db.SaveChanges();
-        }
-
-        public async Task<List<Models.Reorder>> GetReordersByStoreNoAsync(int storeNo)
-            => await _db.Reorders.Where(x => x.StoreNo == storeNo).ToListAsync();
-
-        public async Task DeleteReorderAsync(List<Models.Reorder> reorder)
-        {
-            _db.Reorders.RemoveRange(reorder);
-            await _db.SaveChangesAsync();
         }
     }
 }

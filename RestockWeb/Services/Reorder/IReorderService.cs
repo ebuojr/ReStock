@@ -5,6 +5,5 @@ namespace RestockWeb.Services.Reorder
     public interface IReorderService
     {
         Task<List<Models.Reorder>> CreatePotentialOrdersByStoreNoAsync(int storeNo);
-        Task ProcessReorderAsync(List<Models.Reorder> reorders);
     }
 }

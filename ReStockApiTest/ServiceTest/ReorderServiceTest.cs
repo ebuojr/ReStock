@@ -44,7 +44,7 @@ namespace ReStockApiTest.ServiceTest
             _context.Dispose();
         }
 
-        public static IEnumerable<object[]> InvalidStoreNumbers =>
+        public static IEnumerable<object[]> StoreExistenceCases =>
             new List<object[]>
             {
                 new object[] { 0 },
@@ -53,11 +53,11 @@ namespace ReStockApiTest.ServiceTest
             };
 
         [Theory]
-        [MemberData(nameof(InvalidStoreNumbers))]
-        public async Task CreatePotentialOrdersByStoreNoAsync_InvalidStoreNo_ThrowsArgumentNullException(int storeNo)
+        [MemberData(nameof(StoreExistenceCases))]
+        public async Task CreatePotentialOrdersByStoreNoAsync_InvalidStore_Throws(int storeNo)
         {
             // Arrange
-            _storeServiceMock.Setup(s => s.StoreExists(storeNo));
+            _storeServiceMock.Setup(s => s.StoreExists(storeNo)).Throws(new ArgumentNullException("Store number does not exist."));
 
             // Act
             Func<Task> act = async () => await _reorderService.CreatePotentialOrdersByStoreNoAsync(storeNo);
@@ -76,10 +76,10 @@ namespace ReStockApiTest.ServiceTest
 
         [Theory]
         [MemberData(nameof(NoThresholdsCases))]
-        public async Task CreatePotentialOrdersByStoreNoAsync_NoThresholds_ThrowsArgumentNullException(List<StoresInventoryWithThresholdDTO> thresholds)
+        public async Task CreatePotentialOrdersByStoreNoAsync_NoThresholds_Throws(List<StoresInventoryWithThresholdDTO> thresholds)
         {
             // Arrange
-            _storeServiceMock.Setup(s => s.GetStore(It.IsAny<int>())).ReturnsAsync(new Store());
+            _storeServiceMock.Setup(s => s.StoreExists(It.IsAny<int>())).Returns(Task.CompletedTask);
             _inventoryServiceMock.Setup(i => i.GetStoreInventoryByStoreNoWithThresholdsAsync(It.IsAny<int>()))
                 .ReturnsAsync(thresholds);
 
@@ -91,9 +91,10 @@ namespace ReStockApiTest.ServiceTest
                 .WithMessage("*No thresholds found for the given store number.*");
         }
 
-        public static IEnumerable<object[]> ThresholdsForReorderCases =>
+        public static IEnumerable<object[]> ReorderLogicCases =>
             new List<object[]>
             {
+                // Case: reorder amount < min reorder quantity
                 new object[]
                 {
                     new List<StoresInventoryWithThresholdDTO>
@@ -101,16 +102,17 @@ namespace ReStockApiTest.ServiceTest
                         new StoresInventoryWithThresholdDTO
                         {
                             ItemNo = "ITEM001",
-                            CurrentQuantity = 5,
+                            CurrentQuantity = 9,
                             MinimumQuantity = 10,
-                            TargetQuantity = 20,
+                            TargetQuantity = 15,
                             ReorderQuantity = 10
                         }
                     },
-                    5, // DC Inventory
-                    ReorderLogType.DCInventory.ToString(),
+                    20, // DC Inventory
+                    ReorderLogType.MinimumReorder.ToString(),
                     false // ShouldAddToResult
                 },
+                // Case: DC inventory < 1
                 new object[]
                 {
                     new List<StoresInventoryWithThresholdDTO>
@@ -124,18 +126,55 @@ namespace ReStockApiTest.ServiceTest
                             ReorderQuantity = 10
                         }
                     },
+                    0, // DC Inventory
+                    ReorderLogType.DCInventory.ToString(),
+                    false
+                },
+                // Case: DC inventory < reorder amount
+                new object[]
+                {
+                    new List<StoresInventoryWithThresholdDTO>
+                    {
+                        new StoresInventoryWithThresholdDTO
+                        {
+                            ItemNo = "ITEM003",
+                            CurrentQuantity = 5,
+                            MinimumQuantity = 10,
+                            TargetQuantity = 20,
+                            ReorderQuantity = 10
+                        }
+                    },
+                    8, // DC Inventory
+                    ReorderLogType.DCInventory.ToString(),
+                    false
+                },
+                // Case: All conditions met, reorder created
+                new object[]
+                {
+                    new List<StoresInventoryWithThresholdDTO>
+                    {
+                        new StoresInventoryWithThresholdDTO
+                        {
+                            ItemNo = "ITEM004",
+                            CurrentQuantity = 5,
+                            MinimumQuantity = 10,
+                            TargetQuantity = 20,
+                            ReorderQuantity = 10
+                        }
+                    },
                     20, // DC Inventory
-                    null,
-                    true // ShouldAddToResult
+                    ReorderLogType.Reorder.ToString(),
+                    true
                 }
             };
 
         [Theory]
-        [MemberData(nameof(ThresholdsForReorderCases))]
-        public async Task CreatePotentialOrdersByStoreNoAsync_Thresholds_ReorderBehavior(List<StoresInventoryWithThresholdDTO> thresholds, int dcInventory, string? expectedLogType, bool shouldAddToResult)
+        [MemberData(nameof(ReorderLogicCases))]
+        public async Task CreatePotentialOrdersByStoreNoAsync_ReorderLogic_WorksAsExpected(
+            List<StoresInventoryWithThresholdDTO> thresholds, int dcInventory, string expectedLogType, bool shouldAddToResult)
         {
             // Arrange
-            _storeServiceMock.Setup(s => s.GetStore(It.IsAny<int>())).ReturnsAsync(new Store());
+            _storeServiceMock.Setup(s => s.StoreExists(It.IsAny<int>())).Returns(Task.CompletedTask);
             _inventoryServiceMock.Setup(i => i.GetStoreInventoryByStoreNoWithThresholdsAsync(It.IsAny<int>()))
                 .ReturnsAsync(thresholds);
             _inventoryServiceMock.Setup(i => i.GetDistributionCenterInventoryAsync(It.IsAny<string>()))
@@ -150,21 +189,26 @@ namespace ReStockApiTest.ServiceTest
                 result.Should().HaveCount(1);
                 result[0].StoreNo.Should().Be(123);
                 result[0].ItemNo.Should().Be(thresholds[0].ItemNo);
+                _reorderLogServiceMock.Verify(r => r.LogAsync(
+                    123,
+                    thresholds[0].ItemNo,
+                    It.IsAny<int>(),
+                    expectedLogType,
+                    It.IsAny<string>(),
+                    true
+                ), Times.Once);
             }
             else
             {
                 result.Should().BeEmpty();
-                if (expectedLogType != null)
-                {
-                    _reorderLogServiceMock.Verify(r => r.LogAsync(
-                        123,
-                        thresholds[0].ItemNo,
-                        It.IsAny<int>(),
-                        expectedLogType,
-                        It.IsAny<string>(),
-                        false
-                    ), Times.Once);
-                }
+                _reorderLogServiceMock.Verify(r => r.LogAsync(
+                    123,
+                    thresholds[0].ItemNo,
+                    It.IsAny<int>(),
+                    expectedLogType,
+                    It.IsAny<string>(),
+                    false
+                ), Times.Once);
             }
         }
     }

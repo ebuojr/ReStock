@@ -5,5 +5,6 @@
         MinimumReorder,
         DCInventory,
         Reorder,
+        Threshold
     }
 }

@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.InMemory;
 using ReStockApi.BackroundService;
 using ReStockApi.Models;
 using ReStockApi.Services.DataGeneration;
@@ -53,10 +54,20 @@ builder.Services.AddScoped<IDataGenerationService, DataGenerationService>();
 builder.Services.AddHostedService<ReorderingService>();
 
 // database
-builder.Services.AddDbContext<ReStockDbContext>(options =>
+if (builder.Environment.EnvironmentName == "IntegrationTest")
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    builder.Services.AddDbContext<ReStockDbContext>(options =>
+    {
+        options.UseInMemoryDatabase("TestDb");
+    });
+}
+else
+{
+    builder.Services.AddDbContext<ReStockDbContext>(options =>
+    {
+        options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
+}
 
 var app = builder.Build();
 
@@ -71,3 +82,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
+public partial class Program { } // Make Program public for test access

@@ -6,11 +6,11 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace ReStockApiTest.IntegrationTest
 {
-    public class SalesOrderControllerIntegrationTest : IClassFixture<WebApplicationFactory<Program>>
+    public class SalesOrderControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public SalesOrderControllerIntegrationTest(WebApplicationFactory<Program> factory)
+        public SalesOrderControllerIntegrationTest(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }
@@ -39,11 +39,11 @@ namespace ReStockApiTest.IntegrationTest
         [Fact]
         public async Task CreateUpdateSalesOrder_Works()
         {
-            var reorder = new[] { new { StoreNo = 1, ItemNo = "TEST999", Quantity = 1 } };
+            var reorder = new[] { new { StoreNo = 5090, ItemNo = "TEST999", Quantity = 1 } };
             var createResp = await _client.PostAsJsonAsync("/api/salesorder/craete-sales-order", reorder);
             createResp.EnsureSuccessStatusCode();
 
-            var salesOrder = new { HeaderNo = 1, StoreNo = 1 };
+            var salesOrder = new { HeaderNo = "SO900", StoreNo = 5090 };
             var updateResp = await _client.PutAsJsonAsync("/api/salesorder", salesOrder);
             updateResp.EnsureSuccessStatusCode();
         }

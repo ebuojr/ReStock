@@ -6,11 +6,11 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace ReStockApiTest.IntegrationTest
 {
-    public class InventoryControllerIntegrationTest : IClassFixture<WebApplicationFactory<Program>>
+    public class InventoryControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public InventoryControllerIntegrationTest(WebApplicationFactory<Program> factory)
+        public InventoryControllerIntegrationTest(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }

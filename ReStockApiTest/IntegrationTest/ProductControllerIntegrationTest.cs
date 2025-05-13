@@ -6,11 +6,11 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace ReStockApiTest.IntegrationTest
 {
-    public class ProductControllerIntegrationTest : IClassFixture<WebApplicationFactory<Program>>
+    public class ProductControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public ProductControllerIntegrationTest(WebApplicationFactory<Program> factory)
+        public ProductControllerIntegrationTest(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }
@@ -25,11 +25,11 @@ namespace ReStockApiTest.IntegrationTest
         [Fact]
         public async Task CreateUpdateDeleteProduct_Works()
         {
-            var product = new { ItemNo = "TEST999", Name = "Test Product", Brand = "BrandX", RetailPrice = 10.0, IsActive = true };
+            var product = new { ItemNo = "TEST999", Name = "Test Product", Brand = "BrandX", RetailPrice = 100.0, IsActive = true };
             var createResp = await _client.PostAsJsonAsync("/api/product/create", product);
             createResp.EnsureSuccessStatusCode();
 
-            var updateProduct = new { ItemNo = "TEST999", Name = "Updated Product", Brand = "BrandX", RetailPrice = 12.0, IsActive = true };
+            var updateProduct = new { ItemNo = "TEST999", Name = "Updated Product", Brand = "BrandX", RetailPrice = 102.0, IsActive = true };
             var updateResp = await _client.PutAsJsonAsync("/api/product/update", updateProduct);
             updateResp.EnsureSuccessStatusCode();
 

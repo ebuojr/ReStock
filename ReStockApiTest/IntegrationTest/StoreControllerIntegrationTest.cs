@@ -3,14 +3,16 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 using ReStockApi;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
+using ReStockApi.Models;
+using FluentAssertions;
 
 namespace ReStockApiTest.IntegrationTest
 {
-    public class StoreControllerIntegrationTest : IClassFixture<WebApplicationFactory<Program>>
+    public class StoreControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public StoreControllerIntegrationTest(WebApplicationFactory<Program> factory)
+        public StoreControllerIntegrationTest(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }
@@ -25,15 +27,16 @@ namespace ReStockApiTest.IntegrationTest
         [Fact]
         public async Task CreateUpdateDeleteStore_Works()
         {
-            var store = new { StoreNo = 999, Name = "Test Store", Address = "Test Address" };
+            var store = new Store() { No = 5090, Name = "Test Store", Address = "Test Address", Country = "Test Country" };
             var createResp = await _client.PostAsJsonAsync("/api/store/create", store);
             createResp.EnsureSuccessStatusCode();
 
-            var updateStore = new { StoreNo = 999, Name = "Updated Store", Address = "Updated Address" };
+            var updateStore = new Store() { No = 5090, Name = "Updated Store", Address = "Updated Address", Country = "Test Country" };
             var updateResp = await _client.PutAsJsonAsync("/api/store/update", updateStore);
             updateResp.EnsureSuccessStatusCode();
 
-            var deleteResp = await _client.DeleteAsync("/api/store/delete/999");
+            var getStoreResposne = await _client.GetFromJsonAsync<Store>("/api/store/get/5090");
+            var deleteResp = await _client.DeleteAsync($"/api/store/delete/{getStoreResposne.Id}");
             deleteResp.EnsureSuccessStatusCode();
         }
 

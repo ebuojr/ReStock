@@ -6,11 +6,11 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace ReStockApiTest.IntegrationTest
 {
-    public class ThresholdControllerIntegrationTest : IClassFixture<WebApplicationFactory<Program>>
+    public class ThresholdControllerIntegrationTest : IClassFixture<CustomWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public ThresholdControllerIntegrationTest(WebApplicationFactory<Program> factory)
+        public ThresholdControllerIntegrationTest(CustomWebApplicationFactory factory)
         {
             _client = factory.CreateClient();
         }

@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,5 +28,12 @@
   <ItemGroup>
     <Folder Include="Services\WorkerService\" />
   </ItemGroup>
+
+  <ItemGroup>
+  <None Update="..\ReStockApi\bin\Debug\net9.0\ReStockApi.deps.json">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Link>ReStockApi.deps.json</Link>
+  </None>
+</ItemGroup>
 
 </Project>

@@ -7,12 +7,11 @@
     <!-- Header Section -->
     <div class="w-full flex justify-between items-center mb-4">
         <PageTitleComponent Title="Products overview" Description="This page provides an overview of all reorder logs." />
-        <div class="flex gap-2">
-            <!-- Search Input -->
+        <div class="flex gap-2">            <!-- Search Input -->
             <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search products..."
-            class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+            class="border border-gray-300 rounded px-4 py-2 text-base w-xl" />
             <!-- Create New Product Button -->
-            <button x-on:click="editopen = true" @onclick="() => { SelectedProduct = new() {Id = 0}; }" class="bg-gray-600 text-sm text-white px-4 py-1.5 rounded">
+            <button x-on:click="editopen = true" @onclick="() => { SelectedProduct = new() {Id = 0}; }" class="bg-gray-600 text-base text-white px-4 py-1.5 rounded">
                 Create New Product
             </button>
         </div>
@@ -27,10 +26,9 @@
                 <div class="h-48 bg-gray-100">
                     <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Crect width='200' height='200' fill='%23ddd'/%3E%3Ctext x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%23666' font-family='Arial' font-size='20'%3EPlaceholder%3C/text%3E%3C/svg%3E" alt="Product Image" class="w-full h-full object-cover" />
                 </div>
-                <!-- Product Details -->
-                <div class="p-4 flex flex-col gap-2">
-                    <h2 class="text-sm font-semibold text-gray-400 truncate">@product.ItemNo</h2>
-                    <h2 class="text-lg font-semibold text-gray-900 truncate">@product.Name</h2>
+                <!-- Product Details -->                <div class="p-4 flex flex-col gap-2">
+                    <h2 class="text-xs font-semibold text-gray-400 truncate">@product.ItemNo</h2>
+                    <h2 class="text-xl font-semibold text-gray-900 truncate">@product.Name</h2>
                     <p class="text-sm text-gray-600">Brand: <span class="font-medium">@product.Brand</span></p>
                     <p class="text-sm text-gray-600">Price: <span class="font-medium">@product.RetailPrice DKK</span></p>
                 </div>
@@ -65,10 +63,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-        </button>
-
-        <div class="px-4 py-6">
-            <h1 class="text-xl font-bold text-gray-400">Product Info</h1>
+        </button>        <div class="px-4 py-6">
+            <h1 class="text-2xl font-bold text-gray-400">Product Info</h1>
 
             <div class="mt-4 space-y-4">
                 <!-- Item Number Input -->

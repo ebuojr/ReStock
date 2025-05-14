@@ -18,28 +18,24 @@
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
                     <path fill-rule="evenodd" d="M9.58 1.077a.75.75 0 0 1 .405.82L9.165 6h4.085a.75.75 0 0 1 .567 1.241l-6.5 7.5a.75.75 0 0 1-1.302-.638L6.835 10H2.75a.75.75 0 0 1-.567-1.241l6.5-7.5a.75.75 0 0 1 .897-.182Z" clip-rule="evenodd" />
                 </svg>
-            </button>
-
-
-            <!-- Search Input -->
+            </button>            <!-- Search Input -->
             <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search inventory by ItemNo..."
-                   class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+                   class="border border-gray-300 rounded px-4 py-2 text-base w-64" />
         </div>
     </div>
     @if (Store == null)
     {
-        <p class="text-gray-600">Loading store details...</p>
+        <p class="text-base text-gray-600">Loading store details...</p>
     }
     else
-    {
-        <div class="grid grid-cols-1 lg:grid-cols-4 border-b border-gray-300 items-center p-4">
-            <h2 class="text-sm font-semibold text-gray-900">@Store.Name</h2>
-            <p class="text-sm text-gray-600">Store Number: <span class="font-medium">@Store.No</span></p>
-            <p class="text-sm text-gray-600">Country: <span class="font-medium">@Store.Country</span></p>
-            <p class="text-sm text-gray-600">Address: <span class="font-medium">@Store.Address</span></p>
+    {        <div class="grid grid-cols-1 lg:grid-cols-4 border-b border-gray-300 items-center p-4">
+            <h2 class="text-xl font-semibold text-gray-900">@Store.Name</h2>
+            <p class="text-base text-gray-600">Store Number: <span class="font-medium">@Store.No</span></p>
+            <p class="text-base text-gray-600">Country: <span class="font-medium">@Store.Country</span></p>
+            <p class="text-base text-gray-600">Address: <span class="font-medium">@Store.Address</span></p>
         </div>
         <div class="mt-8">
-            <h2 class="text-lg font-semibold mb-2">Store Inventory</h2>
+            <h2 class="text-2xl font-semibold mb-2">Store Inventory</h2>
             @if (FilteredInventoryList == null)
             {
                 <p class="text-gray-600">Loading inventory...</p>
@@ -91,9 +87,8 @@
                                 </svg>
                             </button>
 
-                            <div class="h-full flex flex-col justify-between px-2 py-2">
-                                <div>
-                                    <h2 class="text-lg font-semibold mb-4">@SelectedStoreInventory.ItemNo</h2>
+                            <div class="h-full flex flex-col justify-between px-2 py-2">                                <div>
+                                    <h2 class="text-xl font-semibold mb-4">@SelectedStoreInventory.ItemNo</h2>
                                     <div>
                                         <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
                                         <input type="number" id="quantity" @bind="SelectedStoreInventory.CurrentQuantity" class="p-2 my-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-0" />

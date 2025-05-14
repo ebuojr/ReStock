@@ -1,19 +1,17 @@
 ﻿@page "/sales-orders"
 
-<div class="relative w-full p-6">
-    <div class="w-full flex justify-between items-center mb-4">
+<div class="relative w-full p-6">    <div class="w-full flex justify-between items-center mb-4">
         <PageTitleComponent Title="Sales order overview" Description="This page provides an overview of all sales orders." />
         <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search by Store No, Header No..."
-               class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+               class="border border-gray-300 rounded px-4 py-2 text-base w-xl" />
     </div>
 
     @if (FilteredSalesOrders == null)
-    {
-        <p class="text-gray-600">Loading sales orders...</p>
+    {        <p class="text-base text-gray-600">Loading sales orders...</p>
     }
     else if (!FilteredSalesOrders.Any())
     {
-        <p class="text-gray-600">No sales orders found.</p>
+        <p class="text-base text-gray-600">No sales orders found.</p>
     }
     else
     {
@@ -23,14 +21,13 @@
                 var isExpanded = ExpandedHeaderNo == order.SalesOrder.HeaderNo;
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 bg-white font-semibold p-6 hover:bg-gray-50 duration-75 first:rounded-t last:rounded-b cursor-pointer"
-                         @onclick="() => ToggleExpand(order.SalesOrder.HeaderNo)">
-                        <div>
+                         @onclick="() => ToggleExpand(order.SalesOrder.HeaderNo)">                        <div>
                             <span class="text-xs text-gray-400">Header No</span>
-                            <div class="text-sm text-gray-800">@order.SalesOrder.HeaderNo</div>
+                            <div class="text-base text-gray-800">@order.SalesOrder.HeaderNo</div>
                         </div>
                         <div>
                             <span class="text-xs text-gray-400">Store No</span>
-                            <div class="text-sm text-gray-800">@order.SalesOrder.StoreNo</div>
+                            <div class="text-base text-gray-800">@order.SalesOrder.StoreNo</div>
                         </div>
                         <div>
                             <span class="text-xs text-gray-400">Order Date</span>
@@ -50,6 +47,7 @@
                             </button>
                         </div>
                     </div>
+
                     @if (isExpanded)
                     {
                         <div class="text-center bg-gray-100 px-8 py-4">

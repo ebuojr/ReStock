@@ -4,20 +4,19 @@
 
 <div class="w-full p-6">
     <div class="w-full flex justify-between items-center mb-4">
-        <PageTitleComponent Title="Distribution Center Inventory" Description="This page provides an overview of all reorder logs." />
-        <div class="flex gap-2">
+        <PageTitleComponent Title="Distribution Center Inventory" Description="This page provides an overview of all reorder logs." />        <div class="flex gap-2">
             <input type="text" @bind="SearchTerm" @bind:event="oninput" placeholder="Search by ItemNo..."
-            class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+            class="border border-gray-300 rounded px-4 py-2 text-base w-xl" />
         </div>
     </div>
     <div class="mt-8">
         @if (FilteredInventoryList == null)
         {
-            <p class="text-gray-600">Loading inventory...</p>
+            <p class="text-base text-gray-600">Loading inventory...</p>
         }
         else if (!FilteredInventoryList.Any())
         {
-            <p class="text-gray-600">No inventory found.</p>
+            <p class="text-base text-gray-600">No inventory found.</p>
         }
         else
         {
@@ -44,9 +43,8 @@
                             </svg>
                         </button>
 
-                        <div class="h-full flex flex-col justify-between px-2 py-2">
-                            <div>
-                                <h2 class="text-lg font-semibold mb-4">@SelectedDistributionCenterInventory.ItemNo</h2>
+                        <div class="h-full flex flex-col justify-between px-2 py-2">                            <div>
+                                <h2 class="text-xl font-semibold mb-4">@SelectedDistributionCenterInventory.ItemNo</h2>
                                 <div>
                                     <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
                                     <input type="number" id="quantity" @bind="SelectedDistributionCenterInventory.Quantity" class="p-2 mt-2 block w-full border border-gray-300 rounded-md focus:outline-none focus:ring-0" />

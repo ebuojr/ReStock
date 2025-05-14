@@ -3,26 +3,23 @@
 <PageTitle>Reorder Logs Overview</PageTitle>
 
 <div class="relative w-full p-6">
-    <PageTitleComponent Title="Reorder Logs Overview" Description="This page provides an overview of all reorder logs." />
-
-    <!-- Filter Section -->
+    <PageTitleComponent Title="Reorder Logs Overview" Description="This page provides an overview of all reorder logs." />    <!-- Filter Section -->
     <div class="flex flex-wrap gap-4 mb-6 mt-4">
         <input type="text" @bind="FilterStoreNo" @bind:event="oninput" placeholder="Filter by Store No..."
-               class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+               class="border border-gray-300 rounded px-4 py-2 text-base w-64" />
         <input type="text" @bind="FilterItemNo" @bind:event="oninput" placeholder="Filter by Item No..."
-               class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+               class="border border-gray-300 rounded px-4 py-2 text-base w-64" />
         <input type="date" @bind="FilterCreatedAt" @bind:event="oninput"
-               class="border border-gray-300 rounded px-4 py-2 text-sm w-64" />
+               class="border border-gray-300 rounded px-4 py-2 text-base w-64" />
         <button @onclick="ApplyFilters"
-                class="bg-blue-500 text-sm text-white px-6 py-2 rounded hover:bg-blue-600">
+                class="bg-gray-600 text-base text-white px-6 py-2 rounded hover:bg-gray-700">
             Apply Filters
         </button>
     </div>
 
-    <!-- Reorder Logs Table -->
-    <div class="grid grid-cols-1 divide-y divide-gray-300 border border-gray-300 rounded">
+    <!-- Reorder Logs Table -->    <div class="grid grid-cols-1 divide-y divide-gray-300 border border-gray-300 rounded">
         <!-- Table Header -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;" class="font-semibold bg-gray-100 p-4">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr 2fr;" class="font-semibold text-base bg-gray-100 p-4">
             <div>Type</div>
             <div>Store No</div>
             <div>Item No</div>
@@ -34,7 +31,7 @@
         <!-- Table Rows -->
         @if (FilteredReOrderLogs == null || !FilteredReOrderLogs.Any())
         {
-            <div class="col-span-5 text-center text-gray-600 p-4">
+            <div class="col-span-5 text-center text-base text-gray-600 p-4">
                 No reorder logs found.
             </div>
         }
@@ -88,8 +85,8 @@
     {
         FilteredReOrderLogs = ReOrderLogs
             .Where(log =>
-                (string.IsNullOrWhiteSpace(FilterStoreNo) || log.StoreNo.ToString().Contains(FilterStoreNo, StringComparison.OrdinalIgnoreCase)) &&
-                (string.IsNullOrWhiteSpace(FilterItemNo) || log.ItemNo.Contains(FilterItemNo, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(FilterStoreNo) || log.StoreNo.ToString().Contains(FilterStoreNo.Trim(), StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(FilterItemNo) || log.ItemNo.Contains(FilterItemNo.Trim(), StringComparison.OrdinalIgnoreCase)) &&
                 (!FilterCreatedAt.HasValue || log.LogTime.Date == FilterCreatedAt.Value.Date))
             .ToList();
     }

@@ -16,6 +16,14 @@ namespace ReStockApi.Services.DataGeneration
         private readonly IStoreService _StoreService;
         private readonly ReStockDbContext _db;
 
+        /// <summary>
+        /// Initializes a new instance of the DataGenerationService class.
+        /// </summary>
+        /// <param name="productService">The product service.</param>
+        /// <param name="inventoryService">The inventory service.</param>
+        /// <param name="thresholdService">The threshold service.</param>
+        /// <param name="storeService">The store service.</param>
+        /// <param name="db">The database context.</param>
         public DataGenerationService(
             IProductService productService,
             IInventoryService inventoryService,
@@ -30,6 +38,9 @@ namespace ReStockApi.Services.DataGeneration
             _db = db;
         }
 
+        /// <summary>
+        /// Generates random inventory for the distribution center for all products.
+        /// </summary>
         public async Task GenerateDCInventory()
         {
             var products = await _ProductService.GetProductsAsync();
@@ -43,6 +54,9 @@ namespace ReStockApi.Services.DataGeneration
                 });
         }
 
+        /// <summary>
+        /// Generates random product items and adds them to the database.
+        /// </summary>
         public async Task GenerateProductItems()
         {
             string brand = "Zizzi";
@@ -64,6 +78,9 @@ namespace ReStockApi.Services.DataGeneration
                 await _ProductService.CreateProductAsync(product);
         }
 
+        /// <summary>
+        /// Generates random store inventory for all stores and products.
+        /// </summary>
         public async Task GenerateStoreinventory()
         {
             var products = await _ProductService.GetProductsAsync();
@@ -81,6 +98,9 @@ namespace ReStockApi.Services.DataGeneration
 
         }
 
+        /// <summary>
+        /// Generates random inventory thresholds for all stores and products.
+        /// </summary>
         public async Task GenereateInventoryThresholds()
         {
             var products = await _ProductService.GetProductsAsync();
@@ -98,6 +118,10 @@ namespace ReStockApi.Services.DataGeneration
                     });
         }
 
+        /// <summary>
+        /// Truncates (deletes all rows from) a table by its name and resets its auto-increment sequence.
+        /// </summary>
+        /// <param name="tableName">The name of the table to truncate.</param>
         public async Task TruncateTableByTableName(string tableName)
         {
             try

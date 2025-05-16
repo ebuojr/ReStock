@@ -14,6 +14,13 @@ namespace ReStockApi.Services.Reorder
         private readonly IReorderLogService _ReorderLogService;
         private readonly IStoreService _StoreService;
 
+        /// <summary>
+        /// Initializes a new instance of the ReorderService class.
+        /// </summary>
+        /// <param name="db">The database context.</param>
+        /// <param name="inventoryService">The inventory service.</param>
+        /// <param name="reorderLogService">The reorder log service.</param>
+        /// <param name="storeService">The store service.</param>
         public ReorderService(ReStockDbContext db, IInventoryService inventoryService, IReorderLogService reorderLogService, IStoreService storeService)
         {
             _db = db;
@@ -22,6 +29,11 @@ namespace ReStockApi.Services.Reorder
             _StoreService = storeService;
         }
 
+        /// <summary>
+        /// Creates potential reorder orders for a given store based on inventory thresholds and distribution center availability.
+        /// </summary>
+        /// <param name="storeNo">The store number.</param>
+        /// <returns>A list of reorder orders to be created for the store.</returns>
         public async Task<List<Models.Reorder>> CreatePotentialOrdersByStoreNoAsync(int storeNo)
         {
             var result = new List<Models.Reorder>();

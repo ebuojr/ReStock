@@ -10,12 +10,21 @@ namespace ReStockApi.Services.SalesOrder
         private readonly ReStockDbContext _db;
         private readonly IInventoryService _inventoryService;
 
+        /// <summary>
+        /// Initializes a new instance of the SalesOrderService class.
+        /// </summary>
+        /// <param name="db">The database context.</param>
+        /// <param name="inventoryService">The inventory service.</param>
         public SalesOrderService(ReStockDbContext db, IInventoryService inventoryService)
         {
             _db = db;
             _inventoryService = inventoryService;
         }
 
+        /// <summary>
+        /// Creates sales orders and updates inventory based on the provided reorders.
+        /// </summary>
+        /// <param name="reorder">The list of reorders to process into sales orders.</param>
         public async Task CreateSalesOrderAsync(List<Models.Reorder> reorder)
         {
             var salesorderlines = new List<SalesOrderLine>();
@@ -58,6 +67,10 @@ namespace ReStockApi.Services.SalesOrder
             }
         }
 
+        /// <summary>
+        /// Gets all sales orders with their lines.
+        /// </summary>
+        /// <returns>A list of sales order DTOs.</returns>
         public async Task<List<SalesOrderDTO>> GetAllSalesOrdersAsync()
         {
             var result = new List<SalesOrderDTO>();
@@ -71,6 +84,11 @@ namespace ReStockApi.Services.SalesOrder
             return result.OrderByDescending(so => so.SalesOrder.OrderDate).ToList();
         }
 
+        /// <summary>
+        /// Gets a sales order and its lines by header number.
+        /// </summary>
+        /// <param name="headerNo">The header number of the sales order.</param>
+        /// <returns>The sales order DTO.</returns>
         public async Task<SalesOrderDTO> GetSalesOrderByHeaderNoAsync(string headerNo)
         {
             var header = await _db.SalesOrders.FirstOrDefaultAsync(so => so.HeaderNo == headerNo);
@@ -79,6 +97,11 @@ namespace ReStockApi.Services.SalesOrder
             return new SalesOrderDTO() { SalesOrder = header, SalesOrderLines = lines };
         }
 
+        /// <summary>
+        /// Gets all sales orders and their lines for a specific store.
+        /// </summary>
+        /// <param name="storeNo">The store number.</param>
+        /// <returns>A list of sales order DTOs for the store.</returns>
         public async Task<List<SalesOrderDTO>> GetSalesOrderByStoreNoAsync(int storeNo)
         {
             var result = new List<SalesOrderDTO>();
@@ -93,6 +116,10 @@ namespace ReStockApi.Services.SalesOrder
             return result;
         }
 
+        /// <summary>
+        /// Gets the next sales order number and increments the counter.
+        /// </summary>
+        /// <returns>The next sales order number as a string.</returns>
         public async Task<string> GetSalesOrderNumber()
         {
             var currentNo = await _db.SalesOrderNumber.FirstAsync();
@@ -102,6 +129,11 @@ namespace ReStockApi.Services.SalesOrder
             return currentNo.No.ToString();
         }
 
+        /// <summary>
+        /// Updates the header of a sales order.
+        /// </summary>
+        /// <param name="salesOrder">The sales order to update.</param>
+        /// <returns>The updated sales order.</returns>
         public async Task<Models.SalesOrder> UpdateSalesOrderHeaderAsync(Models.SalesOrder salesOrder)
         {
             _db.SalesOrders.Update(salesOrder);

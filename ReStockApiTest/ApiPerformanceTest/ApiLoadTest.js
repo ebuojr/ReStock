@@ -1,16 +1,30 @@
-// k6 performance test for ReStock API
-// Each group targets a specific API endpoint to measure response time and reliability
-// Example parameters are used for endpoints that require them
-// Use k6's summary and tags to analyze per-endpoint performance after running the test
+// Guidance: How to Run this k6 Load Test
+// --------------------------------------------------
+// 1. Install k6 if you haven't already:
+//    - Download from https://k6.io/docs/getting-started/installation/
+//    - Or use: choco install k6 (on Windows with Chocolatey)
+//
+// 2. Start your API server so it is accessible at the BASE_URL defined below.
+//    - Default: https://localhost:7257/api
+//    - Adjust BASE_URL if your API runs on a different port or host.
+//
+// 3. Open a terminal and navigate to this file's directory.
+//
+// 4. Run the test with:
+//    k6 run ApiLoadTest.js
+//
+// 5. View the results in the terminal. 
+//
+// --------------------------------------------------
 
 import http from 'k6/http';
 import { group, sleep } from 'k6';
 
 export let options = {
   stages: [
-    // { duration: '30s', target: 5 },   // Ramp up to 5 users
+    { duration: '30s', target: 5 },   // Ramp up to 5 users
     { duration: '1m', target: 10 },    // Stay at 10 users
-    // { duration: '30s', target: 0 },    // Ramp down to 0 users
+    { duration: '30s', target: 0 },    // Ramp down to 0 users
   ],
 };
 
